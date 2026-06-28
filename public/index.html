@@ -1,0 +1,1306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HonestResume — Free AI Resume Analyzer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+:root{
+  /* Sophisticated neutral base */
+  --bg:#FAFAF8;
+  --bg2:#F4F4F0;
+  --bg3:#EEEEE8;
+  --white:#FFFFFF;
+
+  /* Refined amber/gold accent — warm, not screaming */
+  --gold:#C9A84C;
+  --gold-dark:#A8872E;
+  --gold-light:#FBF6E9;
+  --gold-mid:#F5EDD0;
+  --gold-glow:rgba(201,168,76,.15);
+
+  /* Deep charcoal — not pure black, warm undertone */
+  --ink:#1C1917;
+  --ink2:#292524;
+  --ink3:#57534E;
+  --ink4:#A8A29E;
+  --ink5:#D6D3D1;
+
+  /* Emerald for success */
+  --emerald:#059669;
+  --emerald-light:#ECFDF5;
+  --emerald-mid:#D1FAE5;
+
+  /* Coral for errors */
+  --coral:#DC2626;
+  --coral-light:#FEF2F2;
+
+  /* Amber for warnings */
+  --amber:#D97706;
+  --amber-light:#FFFBEB;
+
+  /* Borders */
+  --border:#E7E5E4;
+  --border2:#D6D3D1;
+
+  /* Shadows — warm tinted */
+  --shadow-xs:0 1px 2px rgba(28,25,23,.06);
+  --shadow-sm:0 1px 3px rgba(28,25,23,.08),0 1px 2px rgba(28,25,23,.04);
+  --shadow:0 4px 8px rgba(28,25,23,.06),0 2px 4px rgba(28,25,23,.04);
+  --shadow-md:0 12px 28px rgba(28,25,23,.08),0 4px 8px rgba(28,25,23,.04);
+  --shadow-lg:0 24px 48px rgba(28,25,23,.1),0 8px 16px rgba(28,25,23,.06);
+  --shadow-xl:0 40px 80px rgba(28,25,23,.12),0 16px 32px rgba(28,25,23,.08);
+
+  --r:8px;--rl:14px;--rxl:22px;
+  --font:'Geist',system-ui,sans-serif;
+  --mono:'Geist Mono',monospace;
+}
+
+/* ── DARK MODE ─── */
+body.dark{
+  --bg:#111110;
+  --bg2:#1A1917;
+  --bg3:#222220;
+  --white:#1E1D1C;
+  --border:#2A2825;
+  --border2:#3A3835;
+  --ink:#FAFAF8;
+  --ink2:#E7E5E4;
+  --ink3:#A8A29E;
+  --ink4:#78716C;
+  --ink5:#44403C;
+  --gold-light:rgba(201,168,76,.08);
+  --gold-mid:rgba(201,168,76,.12);
+  --gold-glow:rgba(201,168,76,.1);
+  --emerald-light:rgba(5,150,105,.08);
+  --emerald-mid:rgba(5,150,105,.12);
+  --coral-light:rgba(220,38,38,.08);
+  --amber-light:rgba(217,119,6,.08);
+  --shadow-xs:0 1px 2px rgba(0,0,0,.3);
+  --shadow-sm:0 1px 3px rgba(0,0,0,.3);
+  --shadow:0 4px 8px rgba(0,0,0,.3);
+  --shadow-md:0 12px 28px rgba(0,0,0,.4);
+  --shadow-lg:0 24px 48px rgba(0,0,0,.5);
+  --shadow-xl:0 40px 80px rgba(0,0,0,.6);
+}
+body.dark nav{background:rgba(17,17,16,.92)!important}
+body.dark .hero-section{background:var(--bg)!important}
+body.dark .how-section{background:var(--bg2);border-color:var(--border)}
+body.dark .app-topbar{background:var(--bg3)}
+body.dark .progress-strip{background:var(--bg3)}
+body.dark .upload-zone{background:var(--bg2)}
+body.dark .app-textarea,.dark .app-ta{background:var(--bg2);color:var(--ink);border-color:var(--border)}
+body.dark .score-card,.dark .kw-panel{background:var(--bg2)}
+body.dark .summ-card,.dark .sbreak,.dark .bullet-card,.dark .feat-card{background:var(--bg2)}
+body.dark .res-box,.dark .bullet-before{background:var(--bg2);color:var(--ink)}
+body.dark .support-card{background:var(--bg2)}
+body.dark .hero-card{background:var(--bg2)}
+body.dark .hero-float-1,.dark .hero-float-2{background:var(--bg2)}
+body.dark .divider-txt{background:var(--bg)}
+body.dark footer{background:var(--bg2);border-color:var(--border)}
+
+body{background:var(--bg);color:var(--ink);font-family:var(--font);font-size:15px;line-height:1.6;min-height:100vh;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+
+/* ── NAV ── */
+nav{position:sticky;top:0;z-index:100;background:rgba(250,250,248,.88);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--border);height:62px;display:flex;align-items:center;justify-content:space-between;padding:0 2rem;transition:box-shadow .3s}
+nav.scrolled{box-shadow:var(--shadow-sm)}
+.nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none;flex-shrink:0}
+.nav-logo-mark{width:32px;height:32px;background:var(--ink);border-radius:9px;display:flex;align-items:center;justify-content:center}
+.nav-logo-mark svg{width:16px;height:16px;fill:var(--bg)}
+.nav-logo-text{font-size:16px;font-weight:700;color:var(--ink);letter-spacing:-.3px}
+.nav-logo-text em{font-style:normal;color:var(--gold)}
+.nav-links{display:flex;align-items:center;gap:1.75rem}
+.nav-links a{color:var(--ink3);font-size:14px;font-weight:500;text-decoration:none;transition:color .15s;letter-spacing:-.1px}
+.nav-links a:hover{color:var(--ink)}
+.nav-right{display:flex;align-items:center;gap:.625rem}
+.nav-pill{background:var(--emerald-light);color:var(--emerald);border:1px solid rgba(5,150,105,.2);font-size:12px;font-weight:600;padding:3px 10px;border-radius:20px;letter-spacing:.02em}
+.theme-btn{background:transparent;border:1px solid var(--border);border-radius:var(--r);padding:7px 13px;cursor:pointer;font-size:13px;font-weight:500;color:var(--ink3);font-family:var(--font);display:inline-flex;align-items:center;gap:5px;transition:all .15s}
+.theme-btn:hover{border-color:var(--border2);color:var(--ink);background:var(--bg2)}
+.btn-nav{background:var(--ink);color:var(--bg);border:none;border-radius:var(--r);padding:9px 18px;font-size:13px;font-weight:600;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:6px;transition:all .2s;font-family:var(--font);letter-spacing:-.1px}
+.btn-nav:hover{background:var(--ink2);transform:translateY(-1px);box-shadow:var(--shadow)}
+
+/* ── HERO ── */
+.hero-section{background:var(--bg);padding:6rem 2rem 4rem;overflow:hidden;position:relative}
+.hero-noise{position:absolute;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");opacity:.4;pointer-events:none}
+.hero-glow{position:absolute;top:-200px;left:50%;transform:translateX(-50%);width:800px;height:600px;background:radial-gradient(ellipse,rgba(201,168,76,.08) 0%,transparent 65%);pointer-events:none}
+.hero-inner{max-width:1040px;margin:0 auto;display:grid;grid-template-columns:1fr 460px;gap:5rem;align-items:center;position:relative;z-index:1}
+.hero-eyebrow{display:inline-flex;align-items:center;gap:7px;font-size:12px;font-weight:600;color:var(--gold);letter-spacing:.08em;text-transform:uppercase;margin-bottom:1.5rem}
+.hero-eyebrow-dot{width:5px;height:5px;background:var(--gold);border-radius:50%;animation:blink 2s ease-in-out infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+h1{font-size:clamp(38px,4.5vw,58px);font-weight:800;line-height:1.08;letter-spacing:-2px;color:var(--ink);margin-bottom:1.25rem}
+h1 .accent{position:relative;display:inline-block}
+h1 .accent::after{content:'';position:absolute;left:0;right:0;bottom:-3px;height:3px;background:linear-gradient(90deg,var(--gold),var(--gold-dark));border-radius:2px;opacity:.8}
+.hero-sub{font-size:17px;color:var(--ink3);line-height:1.75;margin-bottom:2rem;max-width:460px;font-weight:400;letter-spacing:-.1px}
+.hero-btns{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:2.5rem}
+.btn-primary{background:var(--ink);color:var(--bg);border:none;border-radius:50px;padding:13px 28px;font-size:14px;font-weight:600;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:8px;transition:all .2s;font-family:var(--font);letter-spacing:-.1px;box-shadow:var(--shadow)}
+.btn-primary:hover{background:var(--ink2);transform:translateY(-2px);box-shadow:var(--shadow-md)}
+.btn-secondary{background:var(--white);color:var(--ink2);border:1px solid var(--border);border-radius:50px;padding:13px 24px;font-size:14px;font-weight:500;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:8px;transition:all .2s;letter-spacing:-.1px}
+.btn-secondary:hover{border-color:var(--border2);box-shadow:var(--shadow-sm);transform:translateY(-1px)}
+.hero-trust{display:flex;align-items:center;gap:10px}
+.trust-avatars{display:flex}
+.trust-av{width:30px;height:30px;border-radius:50%;background:var(--ink);border:2px solid var(--white);margin-left:-8px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--bg)}
+.trust-av:first-child{margin-left:0}
+.trust-av:nth-child(2){background:#78716C}
+.trust-av:nth-child(3){background:var(--gold-dark)}
+.trust-av:nth-child(4){background:var(--emerald)}
+.trust-text{font-size:13px;color:var(--ink3);font-weight:400}
+.trust-text strong{color:var(--ink2);font-weight:600}
+
+/* Hero Right — Product Preview */
+.hero-right{position:relative}
+.hero-card{background:var(--white);border:1px solid var(--border);border-radius:var(--rxl);box-shadow:var(--shadow-xl);padding:1.5rem;animation:floatCard 5s ease-in-out infinite}
+@keyframes floatCard{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+.hc-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem}
+.hc-label{font-size:13px;font-weight:600;color:var(--ink);letter-spacing:-.2px}
+.hc-badge{background:var(--emerald-light);color:var(--emerald);border:1px solid rgba(5,150,105,.2);font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px;display:flex;align-items:center;gap:4px}
+.hc-score{text-align:center;padding:.75rem 0 1rem}
+.hc-score-num{font-size:60px;font-weight:800;color:var(--ink);letter-spacing:-3px;line-height:1}
+.hc-score-label{font-size:12px;color:var(--ink4);margin-top:4px;font-weight:500}
+.hc-bars{display:flex;flex-direction:column;gap:10px;margin-bottom:1rem}
+.hc-bar-row{display:flex;align-items:center;gap:10px}
+.hc-bar-label{font-size:12px;color:var(--ink3);font-weight:500;width:110px;flex-shrink:0}
+.hc-bar-bg{flex:1;height:5px;background:var(--bg3);border-radius:3px;overflow:hidden}
+.hc-bar-fill{height:100%;border-radius:3px}
+.hc-bar-val{font-size:11px;font-weight:600;color:var(--ink2);width:30px;text-align:right;flex-shrink:0}
+.hc-tags{display:flex;flex-wrap:wrap;gap:5px}
+.hc-tag{font-size:11px;font-weight:500;padding:3px 9px;border-radius:20px}
+.hc-found{background:var(--emerald-light);color:var(--emerald)}
+.hc-miss{background:var(--coral-light);color:var(--coral)}
+.hf{position:absolute;background:var(--white);border:1px solid var(--border);border-radius:12px;box-shadow:var(--shadow-md);padding:.75rem 1rem;display:flex;align-items:center;gap:9px}
+.hf-1{top:-18px;right:-16px;animation:floatBadge1 4s ease-in-out infinite}
+.hf-2{bottom:-14px;left:-16px;animation:floatBadge2 5s ease-in-out infinite}
+@keyframes floatBadge1{0%,100%{transform:translateY(0) rotate(-1deg)}50%{transform:translateY(-6px) rotate(1deg)}}
+@keyframes floatBadge2{0%,100%{transform:translateY(0) rotate(1deg)}50%{transform:translateY(-5px) rotate(-1deg)}}
+.hf-icon{width:32px;height:32px;border-radius:8px;background:var(--gold-light);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.hf-text{font-size:11px;color:var(--ink3)}
+.hf-text strong{display:block;font-size:12px;font-weight:600;color:var(--ink);margin-bottom:1px}
+
+/* ── TRUST STRIP ── */
+.trust-strip{background:var(--white);border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:.875rem 2rem}
+.trust-inner{max-width:1040px;margin:0 auto;display:flex;align-items:center;justify-content:center;gap:2.5rem;flex-wrap:wrap}
+.ti{display:flex;align-items:center;gap:7px;font-size:13px;color:var(--ink3);font-weight:500;transition:color .15s}
+.ti:hover{color:var(--ink2)}
+.ti-dot{width:5px;height:5px;background:var(--emerald);border-radius:50%;flex-shrink:0}
+
+/* ── FEATURES ── */
+.features-section{padding:6rem 2rem;max-width:1040px;margin:0 auto}
+.section-chip{display:inline-flex;align-items:center;gap:6px;background:var(--gold-light);border:1px solid rgba(201,168,76,.25);color:var(--gold-dark);font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px;letter-spacing:.06em;text-transform:uppercase;margin-bottom:1rem}
+.section-h{font-size:clamp(26px,3.5vw,40px);font-weight:800;letter-spacing:-1.5px;color:var(--ink);margin-bottom:.75rem;line-height:1.15}
+.section-sub{font-size:16px;color:var(--ink3);max-width:480px;line-height:1.7;font-weight:400}
+.feats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);border:1px solid var(--border);border-radius:var(--rl);overflow:hidden;margin-top:3rem}
+.feat-card{background:var(--white);padding:2rem;transition:background .2s;position:relative}
+.feat-card:hover{background:var(--bg)}
+.feat-icon{font-size:24px;margin-bottom:1.25rem;display:block}
+.feat-title{font-size:15px;font-weight:700;color:var(--ink);margin-bottom:.5rem;letter-spacing:-.2px}
+.feat-desc{font-size:13px;color:var(--ink3);line-height:1.65}
+.feat-pill{display:inline-flex;align-items:center;gap:5px;background:var(--gold-light);color:var(--gold-dark);font-size:11px;font-weight:600;padding:3px 9px;border-radius:20px;margin-top:.875rem;border:1px solid rgba(201,168,76,.2)}
+
+/* ── HOW ── */
+.how-section{background:var(--white);border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:6rem 2rem}
+.how-inner{max-width:900px;margin:0 auto}
+.how-steps{display:grid;grid-template-columns:repeat(3,1fr);gap:3rem;margin-top:3.5rem;position:relative}
+.how-steps::before{content:'';position:absolute;top:22px;left:calc(16.6% + 12px);right:calc(16.6% + 12px);height:1px;background:linear-gradient(90deg,var(--border),var(--gold-mid),var(--border));pointer-events:none}
+.how-step{text-align:center}
+.how-num{width:44px;height:44px;border-radius:50%;background:var(--ink);color:var(--bg);font-size:16px;font-weight:800;display:flex;align-items:center;justify-content:center;margin:0 auto 1.25rem;position:relative;z-index:1}
+.how-title{font-size:15px;font-weight:700;color:var(--ink);margin-bottom:.5rem;letter-spacing:-.2px}
+.how-desc{font-size:13px;color:var(--ink3);line-height:1.65}
+
+/* ── WHY ── */
+.why-section{padding:5rem 2rem;max-width:1040px;margin:0 auto}
+.why-card{background:var(--ink);border-radius:var(--rxl);padding:4rem;display:grid;grid-template-columns:1.1fr 1fr;gap:5rem;align-items:center;position:relative;overflow:hidden}
+.why-card::before{content:'';position:absolute;top:-150px;right:-100px;width:400px;height:400px;background:radial-gradient(circle,rgba(201,168,76,.1) 0%,transparent 60%);pointer-events:none}
+.why-card::after{content:'';position:absolute;bottom:-100px;left:-50px;width:300px;height:300px;background:radial-gradient(circle,rgba(5,150,105,.06) 0%,transparent 60%);pointer-events:none}
+.why-chip{display:inline-flex;align-items:center;gap:6px;background:rgba(201,168,76,.12);border:1px solid rgba(201,168,76,.2);color:var(--gold);font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px;letter-spacing:.06em;text-transform:uppercase;margin-bottom:1rem}
+.why-quote{font-size:clamp(20px,2.5vw,28px);font-weight:700;color:#FAFAF8;line-height:1.4;margin-bottom:1rem;letter-spacing:-.5px}
+.why-quote .hl{color:var(--gold)}
+.why-body{font-size:14px;color:rgba(250,250,248,.5);line-height:1.8}
+.why-points{display:flex;flex-direction:column;gap:1.25rem}
+.why-pt{display:flex;gap:14px;align-items:flex-start}
+.why-pt-icon{width:34px;height:34px;border-radius:9px;background:rgba(250,250,248,.06);border:1px solid rgba(250,250,248,.08);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:15px}
+.why-pt-body strong{display:block;font-size:14px;font-weight:600;color:#FAFAF8;margin-bottom:3px;letter-spacing:-.1px}
+.why-pt-body{font-size:13px;color:rgba(250,250,248,.45);line-height:1.6}
+
+/* ── APP ── */
+.app-section{padding:5rem 2rem;max-width:1040px;margin:0 auto}
+.app-shell{background:var(--white);border:1px solid var(--border);border-radius:var(--rxl);overflow:hidden;box-shadow:var(--shadow-xl)}
+.app-topbar{background:var(--bg2);border-bottom:1px solid var(--border);padding:12px 18px;display:flex;align-items:center;gap:8px}
+.app-dot{width:11px;height:11px;border-radius:50%}
+.app-label{font-size:12px;color:var(--ink4);margin-left:8px;font-weight:600;font-family:var(--mono)}
+.progress-strip{display:flex;background:var(--bg2);border-bottom:1px solid var(--border)}
+.prog-step{flex:1;padding:13px 16px;display:flex;align-items:center;gap:10px;cursor:pointer;border-right:1px solid var(--border);transition:background .15s;position:relative}
+.prog-step:last-child{border-right:none}
+.prog-step::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:transparent;transition:background .2s}
+.prog-step.active{background:var(--gold-light)}
+.prog-step.active::after{background:var(--gold)}
+.prog-step.done{background:var(--emerald-light)}
+.prog-step.done::after{background:var(--emerald)}
+.prog-num{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;background:var(--bg3);color:var(--ink3);border:1px solid var(--border);transition:all .2s}
+.prog-step.active .prog-num{background:var(--gold);color:white;border-color:var(--gold)}
+.prog-step.done .prog-num{background:var(--emerald);color:white;border-color:var(--emerald)}
+.prog-label{font-size:13px;font-weight:600;color:var(--ink3);letter-spacing:-.1px}
+.prog-step.active .prog-label{color:var(--gold-dark)}
+.prog-step.done .prog-label{color:var(--emerald)}
+.prog-desc{font-size:11px;color:var(--ink4)}
+.app-body{padding:2rem}
+
+/* Upload */
+.upload-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:1.25rem}
+.field-label{font-size:13px;font-weight:600;color:var(--ink2);display:block;margin-bottom:6px;letter-spacing:-.1px}
+.field-sub{font-size:11px;color:var(--ink4);font-weight:400;margin-left:6px}
+.upload-zone{border:1.5px dashed var(--border2);border-radius:var(--rl);padding:2rem 1rem;text-align:center;cursor:pointer;transition:all .2s;position:relative;min-height:150px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:9px;background:var(--bg)}
+.upload-zone:hover{border-color:var(--gold);background:var(--gold-light);transform:translateY(-1px)}
+.upload-zone.has-file{border-style:solid;border-color:var(--emerald);background:var(--emerald-light)}
+.upload-zone.drag-over{border-color:var(--gold);background:var(--gold-mid);transform:scale(1.02)}
+.upload-zone input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.uz-icon{width:42px;height:42px;border-radius:var(--r);display:flex;align-items:center;justify-content:center;font-size:20px;transition:all .2s}
+.uz-title{font-size:13px;font-weight:600;color:var(--ink2);letter-spacing:-.1px}
+.uz-sub{font-size:11px;color:var(--ink4)}
+.uz-fname{font-size:12px;font-weight:500;color:var(--emerald);word-break:break-all;display:none}
+.divider-or{display:flex;align-items:center;gap:12px;margin:.75rem 0}
+.divider-line{flex:1;height:1px;background:var(--border)}
+.divider-txt{font-size:11px;color:var(--ink4);font-weight:500;letter-spacing:.02em;background:var(--white);padding:0 8px}
+.paste-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.app-ta{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:var(--r);padding:11px 13px;color:var(--ink);font-size:13px;font-family:var(--font);resize:vertical;min-height:108px;transition:all .15s;line-height:1.6}
+.app-ta:focus{outline:none;border-color:var(--gold);background:var(--white);box-shadow:0 0 0 3px var(--gold-glow)}
+.app-ta::placeholder{color:var(--ink5)}
+.err-box{background:var(--coral-light);border:1px solid rgba(220,38,38,.2);border-radius:var(--r);padding:10px 13px;font-size:13px;color:var(--coral);margin-top:1rem;display:none}
+.action-row{display:flex;align-items:center;gap:12px;margin-top:1.5rem}
+.btn-run{background:var(--ink);color:var(--bg);border:none;border-radius:50px;padding:13px 28px;font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:8px;transition:all .2s;font-family:var(--font);letter-spacing:-.1px;box-shadow:var(--shadow)}
+.btn-run:hover{background:var(--ink2);transform:translateY(-2px);box-shadow:var(--shadow-md)}
+.hint{font-size:12px;color:var(--ink4)}
+
+/* Loader */
+.loading-panel{display:flex;flex-direction:column;align-items:center;padding:4rem 2rem;gap:18px}
+.loader-ring{width:48px;height:48px;border:2.5px solid var(--border);border-top-color:var(--gold);border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loader-txt{font-size:14px;color:var(--ink3);font-weight:500;letter-spacing:-.1px}
+.loader-dots{display:flex;gap:5px}
+.ld{width:5px;height:5px;border-radius:50%;background:var(--gold);animation:dp 1.2s ease-in-out infinite}
+.ld:nth-child(2){animation-delay:.2s}
+.ld:nth-child(3){animation-delay:.4s}
+@keyframes dp{0%,100%{opacity:.25;transform:scale(.8)}50%{opacity:1;transform:scale(1)}}
+
+/* Results */
+.rtabs{display:flex;border-bottom:1px solid var(--border);margin-bottom:1.5rem;overflow-x:auto;gap:0}
+.rtab{padding:9px 16px;font-size:13px;font-weight:500;color:var(--ink3);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;white-space:nowrap;transition:all .15s;display:flex;align-items:center;gap:5px;letter-spacing:-.1px}
+.rtab:hover{color:var(--ink2)}
+.rtab.active{color:var(--ink);border-bottom-color:var(--gold);font-weight:600}
+.rtab-panel{display:none}
+.rtab-panel.active{display:block}
+.overview-grid{display:grid;grid-template-columns:200px 1fr;gap:14px;margin-bottom:1.25rem}
+.score-card{background:var(--bg);border:1px solid var(--border);border-radius:var(--rl);padding:1.5rem;display:flex;flex-direction:column;align-items:center;gap:10px}
+.score-ring-wrap{position:relative;width:130px;height:130px}
+.score-ring-wrap svg{transform:rotate(-90deg)}
+.score-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.score-num{font-size:36px;font-weight:800;letter-spacing:-2px}
+.score-slash{font-size:12px;color:var(--ink4)}
+.score-lbl{font-size:13px;font-weight:600;color:var(--ink);letter-spacing:-.1px}
+.score-grade{font-size:12px;color:var(--ink3)}
+.kw-panel{background:var(--bg);border:1px solid var(--border);border-radius:var(--rl);padding:1.25rem}
+.kw-sec{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--ink4);margin-bottom:7px;display:flex;align-items:center;gap:5px}
+.kw-tags{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:12px}
+.tag{font-size:12px;font-weight:500;padding:3px 10px;border-radius:20px}
+.tag-found{background:var(--emerald-light);color:var(--emerald);border:1px solid rgba(5,150,105,.2)}
+.tag-miss{background:var(--coral-light);color:var(--coral);border:1px solid rgba(220,38,38,.2)}
+.summ-card{background:var(--white);border:1px solid var(--border);border-radius:var(--rl);padding:1.375rem;margin-bottom:1rem;box-shadow:var(--shadow-xs)}
+.summ-title{font-size:14px;font-weight:700;color:var(--ink);margin-bottom:.875rem;display:flex;align-items:center;gap:7px;letter-spacing:-.2px}
+.summ-body{font-size:13px;color:var(--ink3);line-height:1.7;margin-bottom:1rem}
+.sug-list{list-style:none}
+.sug-item{display:flex;gap:10px;font-size:13px;color:var(--ink3);padding:8px 0;border-bottom:1px solid var(--border);line-height:1.55}
+.sug-item:last-child{border-bottom:none}
+.sug-dot{width:16px;height:16px;background:var(--gold-light);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;border:1px solid rgba(201,168,76,.25)}
+.breakdown-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:1.25rem}
+.sbreak{background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:1rem;box-shadow:var(--shadow-xs)}
+.sbreak-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.sbreak-name{font-size:13px;font-weight:600;color:var(--ink2);letter-spacing:-.1px}
+.sbreak-score{font-size:14px;font-weight:800;letter-spacing:-.5px}
+.bar-bg{height:4px;background:var(--bg3);border-radius:2px;overflow:hidden}
+.bar-fill{height:100%;border-radius:2px;transition:width 1.2s cubic-bezier(.16,1,.3,1)}
+.sbreak-note{font-size:11px;color:var(--ink4);margin-top:6px;line-height:1.5}
+.bullet-card{background:var(--white);border:1px solid var(--border);border-radius:var(--rl);padding:1.25rem;margin-bottom:10px;box-shadow:var(--shadow-xs)}
+.bullet-tag{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--ink4);margin-bottom:5px}
+.bullet-before{font-size:13px;color:var(--ink3);background:var(--bg);border-radius:var(--r);padding:10px 13px;line-height:1.6;border-left:3px solid var(--border2)}
+.bullet-arrow{display:flex;align-items:center;gap:7px;margin:8px 0;font-size:12px;color:var(--emerald);font-weight:600}
+.bullet-after{font-size:13px;color:var(--ink);background:var(--emerald-light);border:1px solid rgba(5,150,105,.15);border-radius:var(--r);padding:10px 13px;line-height:1.6;border-left:3px solid var(--emerald)}
+.bullet-why{font-size:11px;color:var(--ink4);margin-top:7px;font-style:italic;line-height:1.5}
+.res-actions{display:flex;gap:7px;margin-bottom:.875rem}
+.btn-outline{background:var(--white);color:var(--ink3);border:1px solid var(--border);border-radius:var(--r);padding:7px 14px;font-size:13px;font-weight:500;cursor:pointer;display:inline-flex;align-items:center;gap:5px;transition:all .15s;font-family:var(--font);letter-spacing:-.1px}
+.btn-outline:hover{border-color:var(--border2);color:var(--ink);background:var(--bg)}
+.res-box{background:var(--bg);border:1px solid var(--border);border-radius:var(--rl);padding:1.5rem;font-size:13px;line-height:1.9;color:var(--ink);white-space:pre-wrap;max-height:460px;overflow-y:auto;font-family:var(--font)}
+.res-box::-webkit-scrollbar{width:4px}
+.res-box::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+.res-footer{display:flex;justify-content:space-between;align-items:center;margin-top:2rem;padding-top:1.25rem;border-top:1px solid var(--border)}
+
+/* Support */
+.support-section{padding:2rem 2rem 5rem;max-width:1040px;margin:0 auto}
+.support-card{background:var(--white);border:1px solid var(--border);border-radius:var(--rxl);padding:2.5rem;display:flex;align-items:center;justify-content:space-between;gap:2rem;flex-wrap:wrap;box-shadow:var(--shadow)}
+.sup-title{font-size:19px;font-weight:700;color:var(--ink);margin-bottom:5px;letter-spacing:-.4px}
+.sup-sub{font-size:14px;color:var(--ink3);max-width:440px;line-height:1.65}
+.sup-btns{display:flex;gap:9px;flex-wrap:wrap}
+.btn-coffee{display:inline-flex;align-items:center;gap:7px;background:#FFDD00;color:#1A1A1A;font-weight:700;font-size:14px;padding:11px 22px;border-radius:50px;text-decoration:none;transition:all .2s;font-family:var(--font);box-shadow:0 4px 14px rgba(255,221,0,.3);letter-spacing:-.1px}
+.btn-coffee:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(255,221,0,.4)}
+.btn-sponsor{display:inline-flex;align-items:center;gap:7px;background:var(--bg);border:1px solid var(--border2);color:var(--ink2);font-weight:500;font-size:14px;padding:11px 22px;border-radius:50px;text-decoration:none;transition:all .2s;letter-spacing:-.1px}
+.btn-sponsor:hover{border-color:var(--gold);color:var(--gold-dark)}
+
+/* Footer */
+footer{background:var(--ink);padding:2.5rem 2rem;border-top:1px solid var(--border)}
+.footer-inner{max-width:1040px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem}
+.footer-logo{font-size:16px;font-weight:700;color:rgba(250,250,248,.9);letter-spacing:-.3px}
+.footer-logo em{font-style:normal;color:var(--gold)}
+.footer-copy{font-size:13px;color:rgba(250,250,248,.35);margin-top:3px}
+.footer-links{display:flex;gap:1.5rem}
+.footer-links a{font-size:13px;color:rgba(250,250,248,.35);text-decoration:none;transition:color .15s}
+.footer-links a:hover{color:rgba(250,250,248,.65)}
+
+/* Toast */
+.toast{position:fixed;bottom:1.5rem;right:1.5rem;background:var(--ink);color:var(--bg);border-radius:10px;padding:11px 16px;font-size:13px;display:flex;align-items:center;gap:8px;opacity:0;transform:translateY(8px);transition:all .25s;pointer-events:none;z-index:9999;box-shadow:var(--shadow-md);font-weight:500}
+.toast.show{opacity:1;transform:translateY(0)}
+
+/* Drag */
+#drag-overlay{position:fixed;inset:0;background:rgba(28,25,23,.75);backdrop-filter:blur(12px);z-index:9998;display:none;align-items:center;justify-content:center;flex-direction:column}
+#drag-overlay-box{border:2px dashed rgba(201,168,76,.6);border-radius:var(--rxl);padding:3rem 5rem;text-align:center;background:rgba(201,168,76,.06)}
+#drag-overlay-icon{font-size:48px;margin-bottom:14px}
+#drag-overlay-text{font-size:22px;font-weight:700;color:rgba(250,250,248,.9);margin-bottom:6px;letter-spacing:-.5px}
+#drag-overlay-sub{font-size:13px;color:rgba(250,250,248,.4)}
+
+/* Scroll reveal */
+@keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+.reveal{opacity:0;transform:translateY(24px);transition:opacity .6s cubic-bezier(.16,1,.3,1),transform .6s cubic-bezier(.16,1,.3,1)}
+.reveal.visible{opacity:1;transform:translateY(0)}
+.reveal-d1{transition-delay:.08s}
+.reveal-d2{transition-delay:.16s}
+.reveal-d3{transition-delay:.24s}
+
+/* Hero load-in */
+.hero-eyebrow{animation:fadeUp .6s ease both}
+h1{animation:fadeUp .6s .08s ease both}
+.hero-sub{animation:fadeUp .6s .16s ease both}
+.hero-btns{animation:fadeUp .6s .22s ease both}
+.hero-trust{animation:fadeUp .6s .28s ease both}
+.hero-right{animation:fadeUp .6s .12s ease both}
+
+@media(max-width:768px){
+  .hero-inner{grid-template-columns:1fr}
+  .hero-right{display:none}
+  .feats-grid,.how-steps{grid-template-columns:1fr}
+  .upload-grid,.paste-grid,.overview-grid,.breakdown-grid,.why-card{grid-template-columns:1fr}
+  .nav-links{display:none}
+  h1{font-size:36px}
+  .why-card{padding:2rem}
+}
+
+/* ── RADAR CHART ── */
+.radar-wrap{display:flex;align-items:center;justify-content:center;gap:2rem;flex-wrap:wrap;padding:1rem 0}
+.radar-canvas-wrap{position:relative;flex-shrink:0}
+.radar-legend{display:flex;flex-direction:column;gap:10px;min-width:160px}
+.radar-leg-item{display:flex;align-items:center;gap:9px;font-size:13px;color:var(--ink3)}
+.radar-leg-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+.radar-leg-val{margin-left:auto;font-size:12px;font-weight:700;color:var(--ink2)}
+
+/* ── DIFF VIEW ── */
+.diff-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;flex-wrap:wrap;gap:10px}
+.diff-legend{display:flex;gap:12px;font-size:12px}
+.diff-legend-item{display:flex;align-items:center;gap:5px;color:var(--ink3)}
+.diff-legend-swatch{width:12px;height:12px;border-radius:3px}
+.diff-body{background:var(--bg);border:1px solid var(--border);border-radius:var(--rl);padding:1.5rem;font-size:13px;line-height:2;color:var(--ink);white-space:pre-wrap;max-height:500px;overflow-y:auto;font-family:var(--font)}
+.diff-body::-webkit-scrollbar{width:4px}
+.diff-body::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+.diff-add{background:rgba(5,150,105,.12);color:#065f46;border-radius:3px;padding:1px 3px;border-bottom:1.5px solid rgba(5,150,105,.4)}
+.diff-del{background:rgba(220,38,38,.1);color:#991b1b;border-radius:3px;padding:1px 3px;text-decoration:line-through;opacity:.7}
+.diff-kw{background:rgba(201,168,76,.18);color:var(--gold-dark);border-radius:3px;padding:1px 4px;font-weight:600;border-bottom:1.5px solid rgba(201,168,76,.4)}
+body.dark .diff-add{background:rgba(5,150,105,.15);color:#6ee7b7}
+body.dark .diff-del{background:rgba(220,38,38,.12);color:#fca5a5}
+body.dark .diff-kw{background:rgba(201,168,76,.15);color:var(--gold)}
+.diff-stats{display:flex;gap:10px;margin-bottom:.875rem;flex-wrap:wrap}
+.diff-stat{background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:6px 12px;font-size:12px;display:flex;align-items:center;gap:6px;font-weight:500;color:var(--ink3)}
+.diff-stat-dot{width:7px;height:7px;border-radius:50%}
+
+/* ── RECRUITER HEATMAP ── */
+.heatmap-intro{font-size:13px;color:var(--ink3);margin-bottom:1rem;line-height:1.6}
+.heatmap-legend{display:flex;gap:14px;margin-bottom:1rem;flex-wrap:wrap}
+.hm-leg{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--ink3);font-weight:500}
+.hm-swatch{width:14px;height:14px;border-radius:4px}
+.hm-hot{background:rgba(5,150,105,.25);border:1px solid rgba(5,150,105,.4)}
+.hm-warm{background:rgba(217,119,6,.2);border:1px solid rgba(217,119,6,.35)}
+.hm-cold{background:rgba(220,38,38,.15);border:1px solid rgba(220,38,38,.3)}
+.heatmap-body{display:flex;flex-direction:column;gap:10px}
+.hm-section{border-radius:var(--r);overflow:hidden;border:1px solid var(--border)}
+.hm-section-head{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;font-size:13px;font-weight:600;color:var(--ink)}
+.hm-section-head.hm-strong{background:rgba(5,150,105,.1);border-bottom:1px solid rgba(5,150,105,.2)}
+.hm-section-head.hm-medium{background:rgba(217,119,6,.08);border-bottom:1px solid rgba(217,119,6,.15)}
+.hm-section-head.hm-weak{background:rgba(220,38,38,.07);border-bottom:1px solid rgba(220,38,38,.12)}
+.hm-badge{font-size:11px;font-weight:600;padding:2px 9px;border-radius:20px}
+.hm-badge.strong{background:var(--emerald-light);color:var(--emerald)}
+.hm-badge.medium{background:var(--amber-light);color:var(--amber)}
+.hm-badge.weak{background:var(--coral-light);color:var(--coral)}
+.hm-section-body{padding:10px 14px;font-size:12px;color:var(--ink3);line-height:1.65;background:var(--white)}
+.hm-tip{font-size:11px;font-style:italic;color:var(--ink4);margin-top:5px}
+body.dark .hm-section-body{background:var(--bg2)}
+
+/* ── HISTORY PANEL ── */
+.history-btn{background:var(--white);color:var(--ink3);border:1px solid var(--border);border-radius:var(--r);padding:7px 14px;font-size:13px;font-weight:500;cursor:pointer;display:inline-flex;align-items:center;gap:5px;transition:all .15s;font-family:var(--font)}
+.history-btn:hover{border-color:var(--gold);color:var(--gold-dark)}
+.history-drawer{display:none;background:var(--white);border:1px solid var(--border);border-radius:var(--rl);padding:1.25rem;margin-bottom:1rem;box-shadow:var(--shadow)}
+.history-drawer.open{display:block}
+.history-empty{text-align:center;padding:2rem;font-size:13px;color:var(--ink4)}
+.history-list{display:flex;flex-direction:column;gap:8px;max-height:300px;overflow-y:auto}
+.history-item{display:flex;align-items:center;justify-content:space-between;padding:10px 13px;border:1px solid var(--border);border-radius:var(--r);cursor:pointer;transition:all .15s;gap:10px}
+.history-item:hover{border-color:var(--gold);background:var(--gold-light)}
+.history-item-left{display:flex;flex-direction:column;gap:3px;min-width:0}
+.history-item-role{font-size:13px;font-weight:600;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.history-item-date{font-size:11px;color:var(--ink4)}
+.history-item-score{font-size:15px;font-weight:800;flex-shrink:0}
+.history-save-row{display:flex;align-items:center;gap:8px;margin-top:1rem;padding-top:1rem;border-top:1px solid var(--border);font-size:12px;color:var(--ink4)}
+.save-status{font-size:12px;color:var(--ink4);display:flex;align-items:center;gap:5px}
+.save-dot{width:6px;height:6px;border-radius:50%;background:var(--border2)}
+.save-dot.saved{background:var(--emerald);animation:pulse-dot 2s ease-in-out infinite}
+@keyframes pulse-dot{0%,100%{opacity:1}50%{opacity:.4}}
+body.dark .history-drawer,.dark .history-item{background:var(--bg2)}
+</style>
+<body>
+
+<div id="drag-overlay" style="display:none">
+  <div id="drag-overlay-box">
+    <div id="drag-overlay-icon">📄</div>
+    <div id="drag-overlay-text">Drop your file here</div>
+    <div id="drag-overlay-sub">Resume or Job Description — PDF, DOCX, TXT</div>
+  </div>
+</div>
+
+<!-- NAV -->
+<nav id="nav">
+  <a href="#" class="nav-logo">
+    <div class="nav-logo-mark">
+      <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zm-1 1.5L18.5 9H13V3.5zM8 13h8v1.5H8V13zm0 3h5v1.5H8V16zm0-6h2v1.5H8V10z"/></svg>
+    </div>
+    <span class="nav-logo-text">Honest<em>Resume</em></span>
+  </a>
+  <div class="nav-links">
+    <a href="#features">Features</a>
+    <a href="#how">How it works</a>
+    <a href="#app">Try free</a>
+  </div>
+  <div class="nav-right">
+    <span class="nav-pill">✓ Always free</span>
+    <button class="theme-btn" onclick="toggleTheme()" id="theme-btn">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      Dark
+    </button>
+    <a href="#app" class="btn-nav">
+      Analyze resume →
+    </a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero-section">
+  <div class="hero-noise"></div>
+  <div class="hero-glow"></div>
+  <div class="hero-inner">
+    <div>
+      <div class="hero-eyebrow">
+        <div class="hero-eyebrow-dot"></div>
+        AI-powered · Free forever
+      </div>
+      <h1>The resume tool that <span class="accent">tells the truth</span></h1>
+      <p class="hero-sub">ATS scoring, keyword gaps, bullet rewrites, and a fully tailored resume — no paywalls, no sugar-coating, no BS. Because job searching is hard enough.</p>
+      <div class="hero-btns">
+        <a href="#app" class="btn-primary">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          Analyze my resume — free
+        </a>
+        <a href="#how" class="btn-secondary">See how it works</a>
+      </div>
+      <div class="hero-trust">
+        <div class="trust-avatars">
+          <div class="trust-av">A</div>
+          <div class="trust-av">R</div>
+          <div class="trust-av">K</div>
+          <div class="trust-av">S</div>
+        </div>
+        <div class="trust-text"><strong>Thousands of job seekers</strong> get honest feedback here</div>
+      </div>
+    </div>
+    <div class="hero-right">
+      <div class="hf hf-1">
+        <div class="hf-icon">🎯</div>
+        <div class="hf-text"><strong>ATS Score</strong>Analyzed in seconds</div>
+      </div>
+      <div class="hero-card">
+        <div class="hc-top">
+          <div class="hc-label">Resume Analysis</div>
+          <div class="hc-badge">
+            <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+            Excellent
+          </div>
+        </div>
+        <div class="hc-score">
+          <div class="hc-score-num">92</div>
+          <div class="hc-score-label">ATS Score / 100</div>
+        </div>
+        <div class="hc-bars">
+          <div class="hc-bar-row">
+            <span class="hc-bar-label">Keyword match</span>
+            <div class="hc-bar-bg"><div class="hc-bar-fill" style="width:90%;background:var(--emerald)"></div></div>
+            <span class="hc-bar-val">90%</span>
+          </div>
+          <div class="hc-bar-row">
+            <span class="hc-bar-label">Experience fit</span>
+            <div class="hc-bar-bg"><div class="hc-bar-fill" style="width:95%;background:var(--gold)"></div></div>
+            <span class="hc-bar-val">95%</span>
+          </div>
+          <div class="hc-bar-row">
+            <span class="hc-bar-label">Skills match</span>
+            <div class="hc-bar-bg"><div class="hc-bar-fill" style="width:88%;background:var(--ink)"></div></div>
+            <span class="hc-bar-val">88%</span>
+          </div>
+        </div>
+        <div class="hc-tags">
+          <span class="hc-tag hc-found">Program Manager</span>
+          <span class="hc-tag hc-found">Agile</span>
+          <span class="hc-tag hc-found">PMP</span>
+          <span class="hc-tag hc-miss">GCC Lead</span>
+          <span class="hc-tag hc-miss">Stakeholder</span>
+        </div>
+      </div>
+      <div class="hf hf-2">
+        <div class="hf-icon">✍️</div>
+        <div class="hf-text"><strong>5 bullets rewritten</strong>Stronger & quantified</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TRUST STRIP -->
+<div class="trust-strip">
+  <div class="trust-inner">
+    <div class="ti"><div class="ti-dot"></div>Resume never stored</div>
+    <div class="ti"><div class="ti-dot"></div>No account needed</div>
+    <div class="ti"><div class="ti-dot"></div>No premium tiers</div>
+    <div class="ti"><div class="ti-dot"></div>Open source</div>
+  </div>
+</div>
+
+<!-- FEATURES -->
+<section id="features" class="features-section">
+  <div class="section-chip">Everything included</div>
+  <h2 class="section-h">Features others lock behind paywalls</h2>
+  <p class="section-sub">We show you everything. No "upgrade to see your full score." No tricks.</p>
+  <div class="feats-grid">
+    <div class="feat-card reveal">
+      <span class="feat-icon">📊</span>
+      <div class="feat-title">Honest ATS Scoring</div>
+      <div class="feat-desc">Real score with 4-category breakdown — keyword match, experience, skills, formatting. Not inflated to push an upgrade.</div>
+      <span class="feat-pill">Score breakdown</span>
+    </div>
+    <div class="feat-card reveal reveal-d1">
+      <span class="feat-icon">🔍</span>
+      <div class="feat-title">Keyword Gap Analysis</div>
+      <div class="feat-desc">See exactly which keywords from the JD are in your resume — and which critical ones are missing.</div>
+      <span class="feat-pill">Keyword analysis</span>
+    </div>
+    <div class="feat-card reveal reveal-d2">
+      <span class="feat-icon">✍️</span>
+      <div class="feat-title">Bullet Point Rewrites</div>
+      <div class="feat-desc">Before and after — stronger verbs, quantified impact, JD-aligned language that gets past ATS filters.</div>
+      <span class="feat-pill">AI powered</span>
+    </div>
+    <div class="feat-card reveal">
+      <span class="feat-icon">📄</span>
+      <div class="feat-title">Fully Tailored Resume</div>
+      <div class="feat-desc">Complete rewrite of your resume for the specific role. Copy-paste ready. Download as .txt.</div>
+      <span class="feat-pill">Full rewrite</span>
+    </div>
+    <div class="feat-card reveal reveal-d1">
+      <span class="feat-icon">💬</span>
+      <div class="feat-title">Honest Feedback</div>
+      <div class="feat-desc">Direct, actionable critique — not "great start!" followed by a subscription page. We tell you what's wrong.</div>
+      <span class="feat-pill">No BS</span>
+    </div>
+    <div class="feat-card reveal reveal-d2">
+      <span class="feat-icon">⚡</span>
+      <div class="feat-title">15-Second Results</div>
+      <div class="feat-desc">No queues, no email follow-ups. Upload → analyze → full report. Start to finish in under a minute.</div>
+      <span class="feat-pill">Instant</span>
+    </div>
+  </div>
+</section>
+
+<!-- HOW -->
+<section id="how" class="how-section">
+  <div class="how-inner">
+    <div class="section-chip">How it works</div>
+    <h2 class="section-h">Three steps. Two minutes.</h2>
+    <p class="section-sub">No sign-up, no waiting. Upload and go.</p>
+    <div class="how-steps">
+      <div class="how-step reveal">
+        <div class="how-num">1</div>
+        <div class="how-title">Upload your resume</div>
+        <div class="how-desc">Drop your resume in PDF, DOCX, or TXT — or paste the text directly.</div>
+      </div>
+      <div class="how-step reveal reveal-d1">
+        <div class="how-num">2</div>
+        <div class="how-title">Add the job description</div>
+        <div class="how-desc">Upload or paste the JD. More detail means better tailoring.</div>
+      </div>
+      <div class="how-step reveal reveal-d2">
+        <div class="how-num">3</div>
+        <div class="how-title">Get your full report</div>
+        <div class="how-desc">ATS score, keyword gaps, rewritten bullets, and a tailored resume — instantly.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WHY FREE -->
+<section class="why-section">
+  <div class="why-card">
+    <div>
+      <div class="why-chip">Why free?</div>
+      <div class="why-quote">"The job market is already brutal. Your resume tools <span class="hl">shouldn't cost $30/month.</span>"</div>
+      <p class="why-body">Most resume tools show you a score, then lock the breakdown behind a subscription. That's predatory. This is open-source so anyone can use it, audit it, and improve it.</p>
+    </div>
+    <div class="why-points">
+      <div class="why-pt">
+        <div class="why-pt-icon">🔒</div>
+        <div class="why-pt-body"><strong>No data harvesting</strong>Your resume is processed and discarded. No profiles, no data sales, no retargeting.</div>
+      </div>
+      <div class="why-pt">
+        <div class="why-pt-icon">🔍</div>
+        <div class="why-pt-body"><strong>Fully auditable</strong>Open source — you can read exactly what the AI is asked to do with your resume.</div>
+      </div>
+      <div class="why-pt">
+        <div class="why-pt-icon">🤝</div>
+        <div class="why-pt-body"><strong>Community driven</strong>This tool belongs to everyone who needs it. PRs and contributions welcome.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- APP TOOL -->
+<section id="app" class="app-section">
+  <div class="section-chip">The tool</div>
+  <h2 class="section-h" style="margin-bottom:.5rem">Analyze your resume</h2>
+  <p style="font-size:14px;color:var(--ink3);margin-bottom:2rem;letter-spacing:-.1px">Upload resume + job description · Full report in ~15 seconds · No account needed</p>
+  <div class="app-shell">
+    <div class="app-topbar">
+      <div class="app-dot" style="background:#FF5F57"></div>
+      <div class="app-dot" style="background:#FEBC2E"></div>
+      <div class="app-dot" style="background:#28C840"></div>
+      <div class="app-label">honestresume — analyzer</div>
+    </div>
+    <div class="progress-strip">
+      <div class="prog-step active" id="ps1">
+        <div class="prog-num">1</div>
+        <div><div class="prog-label">Upload</div><div class="prog-desc">Resume + JD</div></div>
+      </div>
+      <div class="prog-step" id="ps2">
+        <div class="prog-num">2</div>
+        <div><div class="prog-label">Analyzing</div><div class="prog-desc">AI processing</div></div>
+      </div>
+      <div class="prog-step" id="ps3">
+        <div class="prog-num">3</div>
+        <div><div class="prog-label">Results</div><div class="prog-desc">Full report</div></div>
+      </div>
+    </div>
+    <div class="app-body">
+      <!-- UPLOAD -->
+      <div id="panel-upload">
+        <div class="upload-grid">
+          <div>
+            <label class="field-label">Your resume <span class="field-sub">PDF, DOCX, TXT</span></label>
+            <div class="upload-zone" id="rz">
+              <input type="file" accept=".pdf,.txt,.md,.doc,.docx" id="rf" onchange="pickFile('r')">
+              <div class="uz-icon" id="rz-icon" style="background:var(--gold-light)">📄</div>
+              <div class="uz-title" id="rz-title">Click or drag resume here</div>
+              <div class="uz-sub" id="rz-sub">Supports PDF, DOCX, TXT</div>
+              <div class="uz-fname" id="rz-fname"></div>
+            </div>
+          </div>
+          <div>
+            <label class="field-label">Job description <span class="field-sub">or paste below</span></label>
+            <div class="upload-zone" id="jz">
+              <input type="file" accept=".pdf,.txt,.md,.doc,.docx" id="jf" onchange="pickFile('j')">
+              <div class="uz-icon" id="jz-icon" style="background:var(--gold-light)">💼</div>
+              <div class="uz-title" id="jz-title">Click or drag JD here</div>
+              <div class="uz-sub" id="jz-sub">Upload or paste below</div>
+              <div class="uz-fname" id="jz-fname"></div>
+            </div>
+          </div>
+        </div>
+        <div class="divider-or"><div class="divider-line"></div><div class="divider-txt">OR PASTE TEXT</div><div class="divider-line"></div></div>
+        <div class="paste-grid">
+          <div>
+            <label class="field-label" for="rt" style="margin-bottom:6px;display:block">Resume text</label>
+            <textarea class="app-ta" id="rt" placeholder="Paste your resume text here..."></textarea>
+          </div>
+          <div>
+            <label class="field-label" for="jt" style="margin-bottom:6px;display:block">Job description text</label>
+            <textarea class="app-ta" id="jt" placeholder="Paste the full job description..."></textarea>
+          </div>
+        </div>
+        <div class="err-box" id="err-box"></div>
+        <div class="action-row">
+          <button class="btn-run" onclick="runAnalysis()">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            Run full analysis
+          </button>
+          <span class="hint">~15 seconds · Free · No sign-up</span>
+        </div>
+      </div>
+      <!-- LOADING -->
+      <div id="panel-loading" style="display:none">
+        <div class="loading-panel">
+          <div class="loader-ring"></div>
+          <div class="loader-txt" id="lmsg">Reading your resume...</div>
+          <div class="loader-dots"><div class="ld"></div><div class="ld"></div><div class="ld"></div></div>
+        </div>
+      </div>
+      <!-- RESULTS -->
+      <!-- RESULTS -->
+      <div id="panel-results" style="display:none">
+        <div class="rtabs">
+          <div class="rtab active" onclick="showRTab('overview')">🎯 Overview</div>
+          <div class="rtab" onclick="showRTab('breakdown')">📊 Breakdown</div>
+          <div class="rtab" onclick="showRTab('radar')">🕸️ Radar</div>
+          <div class="rtab" onclick="showRTab('bullets')">✍️ Bullet Rewrites</div>
+          <div class="rtab" onclick="showRTab('heatmap')">🔥 Recruiter View</div>
+          <div class="rtab" onclick="showRTab('resume')">📄 Tailored Resume</div>
+        </div>
+
+        <!-- OVERVIEW TAB -->
+        <div class="rtab-panel active" id="rtp-overview">
+          <div class="overview-grid">
+            <div class="score-card">
+              <div class="score-ring-wrap">
+                <svg width="130" height="130" viewBox="0 0 130 130">
+                  <circle cx="65" cy="65" r="54" fill="none" stroke="var(--border)" stroke-width="9"/>
+                  <circle cx="65" cy="65" r="54" fill="none" id="ats-ring" stroke="var(--gold)" stroke-width="9" stroke-linecap="round" stroke-dasharray="339" stroke-dashoffset="339"/>
+                </svg>
+                <div class="score-center">
+                  <div class="score-num" id="ats-num">—</div>
+                  <div class="score-slash">/100</div>
+                </div>
+              </div>
+              <div class="score-lbl">ATS Score</div>
+              <div class="score-grade" id="ats-grade">Calculating...</div>
+            </div>
+            <div class="kw-panel">
+              <div class="kw-sec"><div style="width:6px;height:6px;background:var(--emerald);border-radius:50%"></div>Keywords found</div>
+              <div class="kw-tags" id="kw-found"></div>
+              <div class="kw-sec"><div style="width:6px;height:6px;background:var(--coral);border-radius:50%"></div>Missing keywords</div>
+              <div class="kw-tags" id="kw-missing"></div>
+            </div>
+          </div>
+          <div class="summ-card">
+            <div class="summ-title">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--gold-dark)" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+              Analysis Summary
+            </div>
+            <div class="summ-body" id="sum-text"></div>
+            <ul class="sug-list" id="sum-sugs"></ul>
+          </div>
+          <!-- History save row -->
+          <div class="history-save-row">
+            <div class="save-status"><div class="save-dot" id="save-dot"></div><span id="save-status-txt">Not saved</span></div>
+            <button class="history-btn" onclick="toggleHistory()" id="history-toggle-btn">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              View history
+            </button>
+          </div>
+          <div class="history-drawer" id="history-drawer">
+            <div style="font-size:13px;font-weight:600;color:var(--ink);margin-bottom:.75rem">Past analyses</div>
+            <div id="history-list-wrap"></div>
+          </div>
+        </div>
+
+        <!-- BREAKDOWN TAB -->
+        <div class="rtab-panel" id="rtp-breakdown">
+          <div class="breakdown-grid" id="breakdown-grid"></div>
+          <div class="summ-card" id="breakdown-advice"></div>
+        </div>
+
+        <!-- RADAR TAB -->
+        <div class="rtab-panel" id="rtp-radar">
+          <p style="font-size:13px;color:var(--ink3);margin-bottom:1.25rem;letter-spacing:-.1px">Five-axis profile — how your resume performs across the dimensions recruiters care about.</p>
+          <div class="radar-wrap">
+            <div class="radar-canvas-wrap">
+              <canvas id="radar-canvas" width="280" height="280"></canvas>
+            </div>
+            <div class="radar-legend" id="radar-legend"></div>
+          </div>
+        </div>
+
+        <!-- BULLETS TAB -->
+        <div class="rtab-panel" id="rtp-bullets">
+          <p style="font-size:13px;color:var(--ink3);margin-bottom:1rem;letter-spacing:-.1px">AI-improved bullet points — stronger verbs, quantified impact, JD-aligned.</p>
+          <div id="bullets-list"></div>
+        </div>
+
+        <!-- HEATMAP TAB -->
+        <div class="rtab-panel" id="rtp-heatmap">
+          <p class="heatmap-intro">How a recruiter scanning your resume for 6 seconds would rate each section. Green = strong, amber = needs metrics, red = missing or weak.</p>
+          <div class="heatmap-legend">
+            <div class="hm-leg"><div class="hm-swatch hm-hot"></div>Strong — recruiters love this</div>
+            <div class="hm-leg"><div class="hm-swatch hm-warm"></div>Needs metrics or keywords</div>
+            <div class="hm-leg"><div class="hm-swatch hm-cold"></div>Weak or missing</div>
+          </div>
+          <div class="heatmap-body" id="heatmap-body"></div>
+        </div>
+
+        <!-- RESUME DIFF TAB -->
+        <div class="rtab-panel" id="rtp-resume">
+          <div class="diff-header">
+            <p style="font-size:13px;color:var(--ink3);letter-spacing:-.1px">Tailored resume with changes highlighted — green = added/improved, strikethrough = removed, gold = keywords integrated.</p>
+            <div class="res-actions" style="margin:0">
+              <button class="btn-outline" onclick="copyResume()">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                Copy clean
+              </button>
+              <button class="btn-outline" onclick="downloadResume()">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                Download .txt
+              </button>
+            </div>
+          </div>
+          <div class="diff-stats" id="diff-stats"></div>
+          <div class="diff-body" id="diff-body"></div>
+          <!-- Hidden clean version for copy/download -->
+          <div style="display:none" id="res-box"></div>
+        </div>
+
+        <div class="res-footer">
+          <button class="btn-outline" onclick="resetApp()">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg>
+            Start over
+          </button>
+          <button class="btn-run" style="padding:10px 18px;font-size:13px" onclick="shareApp()">Share HonestResume</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SUPPORT -->
+<section class="support-section">
+  <div class="support-card">
+    <div>
+      <div class="sup-title">Built free, kept free</div>
+      <div class="sup-sub">HonestResume will always be free and open-source. If it helped you land an interview, a coffee keeps the AI running.</div>
+    </div>
+    <div class="sup-btns">
+      <a href="https://buymeacoffee.com" target="_blank" class="btn-coffee">☕ Buy me a coffee</a>
+      <a href="https://github.com/sponsors" target="_blank" class="btn-sponsor">♥ GitHub Sponsors</a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div>
+      <div class="footer-logo">Honest<em>Resume</em></div>
+      <div class="footer-copy">Free, honest AI resume optimization. No strings attached.</div>
+    </div>
+    <div class="footer-links">
+      <a href="#features">Features</a>
+      <a href="#how">How it works</a>
+      <a href="#app">Try free</a>
+    </div>
+  </div>
+</footer>
+
+<div class="toast" id="toast">
+  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+  <span id="toast-msg">Done!</span>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script>
+// ── CONFIG ──────────────────────────────────────────────────────────────────
+// SUPABASE: Replace with your project URL and anon key after creating a project
+// at https://supabase.com — free tier is sufficient
+const SUPABASE_URL = '';   // e.g. 'https://xyzabc.supabase.co'
+const SUPABASE_KEY = '';   // your anon/public key
+
+// ── STATE ────────────────────────────────────────────────────────────────────
+if(window.pdfjsLib)window.pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+let rText='',jText='',rFile=null,jFile=null,lastResult=null,sessionId=null;
+
+// Generate a session ID for anonymous saves
+function getSessionId(){
+  let id=localStorage.getItem('hr_session');
+  if(!id){id='s_'+Math.random().toString(36).slice(2)+Date.now().toString(36);localStorage.setItem('hr_session',id);}
+  return id;
+}
+sessionId=getSessionId();
+
+// ── FILE READING ─────────────────────────────────────────────────────────────
+async function extractTextFromFile(f){if(f.name.toLowerCase().endsWith('.pdf'))return await extractPDF(f);return new Promise((res,rej)=>{const r=new FileReader();r.onload=e=>res(e.target.result);r.onerror=()=>rej(new Error('Cannot read file'));r.readAsText(f);});}
+async function extractPDF(f){if(!window.pdfjsLib)throw new Error('PDF lib not loaded');const ab=await f.arrayBuffer();const pdf=await window.pdfjsLib.getDocument({data:ab}).promise;let t='';for(let i=1;i<=pdf.numPages;i++){const p=await pdf.getPage(i);const c=await p.getTextContent();t+=c.items.map(i=>i.str).join(' ')+'\n';}return t.trim();}
+function pickFile(type){const inp=document.getElementById(type+'f');const f=inp.files[0];if(!f)return;if(type==='r')rFile=f;else jFile=f;document.getElementById(type+'z').classList.add('has-file');document.getElementById(type+'z-icon').textContent='✅';document.getElementById(type+'z-title').textContent='File ready';document.getElementById(type+'z-sub').style.display='none';const fn=document.getElementById(type+'z-fname');fn.textContent=f.name;fn.style.display='block';if(type==='j')document.getElementById('jt').value='';}
+
+// ── LOADER ────────────────────────────────────────────────────────────────────
+const lmsgs=['Reading your resume...','Parsing job description...','Extracting keywords...','Scoring ATS match...','Building radar profile...','Rewriting bullet points...','Generating heatmap...','Building tailored resume...'];
+let li=0,lt;
+function startLoader(){const el=document.getElementById('lmsg');el.textContent=lmsgs[0];li=0;lt=setInterval(()=>{li=(li+1)%lmsgs.length;el.textContent=lmsgs[li];},2000);}
+function stopLoader(){clearInterval(lt);}
+function setStep(n){[1,2,3].forEach(i=>{const s=document.getElementById('ps'+i);s.classList.remove('active','done');if(i<n)s.classList.add('done');if(i===n)s.classList.add('active');});document.getElementById('panel-upload').style.display=n===1?'block':'none';document.getElementById('panel-loading').style.display=n===2?'block':'none';document.getElementById('panel-results').style.display=n===3?'block':'none';}
+function showErr(msg){const b=document.getElementById('err-box');b.textContent=msg;b.style.display='block';}
+
+// ── ANALYSIS ──────────────────────────────────────────────────────────────────
+async function runAnalysis(){
+  document.getElementById('err-box').style.display='none';
+  const rt2=document.getElementById('rt').value.trim(),jt2=document.getElementById('jt').value.trim();
+  if(!rFile&&!rt2){showErr('Please upload your resume or paste the text.');return;}
+  if(!jFile&&!jt2){showErr('Please upload the job description or paste the text.');return;}
+  try{rText=rFile?await extractTextFromFile(rFile):rt2;jText=jFile?await extractTextFromFile(jFile):jt2;if(!rText||rText.length<50){showErr('Resume text too short — try pasting directly.');return;}}catch(e){showErr('Could not read file: '+e.message);return;}
+  setStep(2);startLoader();
+
+  const prompt=`You are a senior resume coach and ATS expert. Return ONLY valid JSON — no markdown fences, no explanation.
+
+{
+  "atsScore":<0-100 integer, be honest>,
+  "atsGrade":"<Excellent|Good|Fair|Needs Work|Poor>",
+  "summary":"<2-3 honest sentences on fit quality and biggest issues>",
+  "suggestions":["<specific suggestion>","<specific suggestion>","<specific suggestion>","<specific suggestion>"],
+  "foundKeywords":["<keyword present in both resume and JD>"],
+  "missingKeywords":["<important JD keyword missing from resume>"],
+  "scoreBreakdown":[
+    {"category":"Keyword match","score":<0-100>,"note":"<1 sentence>"},
+    {"category":"Experience relevance","score":<0-100>,"note":"<1 sentence>"},
+    {"category":"Skills alignment","score":<0-100>,"note":"<1 sentence>"},
+    {"category":"Resume formatting","score":<0-100>,"note":"<1 sentence>"}
+  ],
+  "breakdownAdvice":"<2-3 sentences of specific next steps>",
+  "radarData":[
+    {"axis":"Keywords","score":<0-100>},
+    {"axis":"Experience","score":<0-100>},
+    {"axis":"Skills","score":<0-100>},
+    {"axis":"Impact","score":<0-100>},
+    {"axis":"Format","score":<0-100>}
+  ],
+  "bulletImprovements":[
+    {"before":"<actual bullet from resume>","after":"<improved version>","why":"<1 sentence reason>"},
+    {"before":"<bullet>","after":"<improved>","why":"<reason>"},
+    {"before":"<bullet>","after":"<improved>","why":"<reason>"},
+    {"before":"<bullet>","after":"<improved>","why":"<reason>"},
+    {"before":"<bullet>","after":"<improved>","why":"<reason>"}
+  ],
+  "heatmapSections":[
+    {"section":"<section name e.g. Summary/Profile>","rating":"<strong|medium|weak>","note":"<1 sentence what recruiters see>","tip":"<1 sentence how to improve>"},
+    {"section":"<section name>","rating":"<strong|medium|weak>","note":"<1 sentence>","tip":"<1 sentence>"},
+    {"section":"<section name>","rating":"<strong|medium|weak>","note":"<1 sentence>","tip":"<1 sentence>"},
+    {"section":"<section name>","rating":"<strong|medium|weak>","note":"<1 sentence>","tip":"<1 sentence>"},
+    {"section":"<section name>","rating":"<strong|medium|weak>","note":"<1 sentence>","tip":"<1 sentence>"}
+  ],
+  "tailoredResume":"<complete rewritten resume optimized for this role — real content, no placeholders, clear sections, keywords integrated naturally>",
+  "addedKeywords":["<keyword added to tailored resume that was missing>"],
+  "jobTitle":"<inferred job title from JD, max 5 words>"
+}
+
+RESUME:
+${rText.slice(0,6000)}
+
+JOB DESCRIPTION:
+${jText.slice(0,3500)}`;
+
+  try{
+    const resp=await fetch('/.netlify/functions/analyze',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-haiku-4-5-20251001',max_tokens:5000,messages:[{role:'user',content:prompt}]})});
+    const raw=await resp.text();
+    if(!resp.ok)throw new Error('Server error '+resp.status+': '+raw.slice(0,200));
+    let data;try{data=JSON.parse(raw);}catch(e){throw new Error('Bad response: '+raw.slice(0,200));}
+    if(data.error)throw new Error(data.error);
+    const txt=data.content.map(c=>c.text||'').join('');
+    const parsed=JSON.parse(txt.replace(/```json|```/g,'').trim());
+    stopLoader();lastResult=parsed;renderResults(parsed);setStep(3);
+    saveToHistory(parsed);
+  }catch(e){stopLoader();setStep(1);showErr('Analysis failed: '+e.message);}
+}
+
+// ── RENDER ────────────────────────────────────────────────────────────────────
+function renderResults(d){
+  const score=Math.min(100,Math.max(0,parseInt(d.atsScore)||0));
+  const col=score>=75?'#059669':score>=50?'#C9A84C':'#DC2626';
+  // Ring
+  document.getElementById('ats-num').textContent=score;
+  document.getElementById('ats-num').style.color=col;
+  document.getElementById('ats-grade').textContent=d.atsGrade||'';
+  const circ=2*Math.PI*54,offset=circ-(score/100)*circ;
+  const ring=document.getElementById('ats-ring');
+  ring.setAttribute('stroke-dasharray',circ.toFixed(2));
+  ring.setAttribute('stroke',col);
+  setTimeout(()=>{ring.style.transition='stroke-dashoffset 1.4s cubic-bezier(.16,1,.3,1)';ring.setAttribute('stroke-dashoffset',offset.toFixed(2));},100);
+  // Keywords
+  document.getElementById('kw-found').innerHTML=(d.foundKeywords||[]).map(k=>`<span class="tag tag-found">${k}</span>`).join('');
+  document.getElementById('kw-missing').innerHTML=(d.missingKeywords||[]).map(k=>`<span class="tag tag-miss">${k}</span>`).join('');
+  // Summary
+  document.getElementById('sum-text').textContent=d.summary||'';
+  document.getElementById('sum-sugs').innerHTML=(d.suggestions||[]).map(s=>`<li class="sug-item"><div class="sug-dot"></div>${s}</li>`).join('');
+  // Breakdown
+  const bg=document.getElementById('breakdown-grid');
+  bg.innerHTML=(d.scoreBreakdown||[]).map(b=>{const sc=Math.min(100,Math.max(0,parseInt(b.score)||0));const c=sc>=75?'#059669':sc>=50?'#C9A84C':'#DC2626';return`<div class="sbreak"><div class="sbreak-head"><span class="sbreak-name">${b.category}</span><span class="sbreak-score" style="color:${c}">${sc}</span></div><div class="bar-bg"><div class="bar-fill" style="width:0%;background:${c}" data-w="${sc}"></div></div><div class="sbreak-note">${b.note||''}</div></div>`;}).join('');
+  setTimeout(()=>{bg.querySelectorAll('.bar-fill').forEach(el=>{el.style.transition='width 1.2s cubic-bezier(.16,1,.3,1)';el.style.width=el.dataset.w+'%';});},150);
+  document.getElementById('breakdown-advice').innerHTML=`<div class="summ-title"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--gold-dark)" stroke-width="2"><path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-6"/></svg>Next Steps</div><div class="summ-body">${d.breakdownAdvice||''}</div>`;
+  // Radar
+  setTimeout(()=>drawRadar(d.radarData||[]),200);
+  // Bullets
+  document.getElementById('bullets-list').innerHTML=(d.bulletImprovements||[]).map(b=>`<div class="bullet-card"><div class="bullet-tag">Before</div><div class="bullet-before">${b.before||''}</div><div class="bullet-arrow"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>Improved</div><div class="bullet-after">${b.after||''}</div><div class="bullet-why">💡 ${b.why||''}</div></div>`).join('');
+  // Heatmap
+  renderHeatmap(d.heatmapSections||[]);
+  // Diff resume
+  const clean=d.tailoredResume||'';
+  document.getElementById('res-box').textContent=clean;
+  renderDiff(rText||'',clean,d.addedKeywords||[],d.missingKeywords||[]);
+}
+
+// ── RADAR CHART ───────────────────────────────────────────────────────────────
+function drawRadar(data){
+  if(!data||!data.length)return;
+  const canvas=document.getElementById('radar-canvas');
+  if(!canvas)return;
+  const ctx=canvas.getContext('2d');
+  const isDark=document.body.classList.contains('dark');
+  const W=280,H=280,cx=W/2,cy=H/2,R=100;
+  const n=data.length;
+  const angles=data.map((_,i)=>(Math.PI*2*(i/n))-Math.PI/2);
+  ctx.clearRect(0,0,W,H);
+  const gridColor=isDark?'rgba(255,255,255,0.08)':'rgba(0,0,0,0.07)';
+  const labelColor=isDark?'rgba(250,250,248,0.55)':'#78716c';
+  // Draw grid rings
+  [0.25,0.5,0.75,1].forEach(t=>{
+    ctx.beginPath();
+    angles.forEach((a,i)=>{const r=R*t;const x=cx+Math.cos(a)*r,y=cy+Math.sin(a)*r;i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);});
+    ctx.closePath();ctx.strokeStyle=gridColor;ctx.lineWidth=1;ctx.stroke();
+  });
+  // Draw axes
+  angles.forEach(a=>{ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(cx+Math.cos(a)*R,cy+Math.sin(a)*R);ctx.strokeStyle=gridColor;ctx.lineWidth=1;ctx.stroke();});
+  // Draw filled polygon
+  ctx.beginPath();
+  data.forEach((d,i)=>{const v=Math.min(100,Math.max(0,d.score||0))/100;const a=angles[i];const x=cx+Math.cos(a)*R*v,y=cy+Math.sin(a)*R*v;i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);});
+  ctx.closePath();
+  ctx.fillStyle='rgba(201,168,76,0.18)';ctx.fill();
+  ctx.strokeStyle='#C9A84C';ctx.lineWidth=2;ctx.stroke();
+  // Draw points
+  data.forEach((d,i)=>{const v=Math.min(100,Math.max(0,d.score||0))/100;const a=angles[i];const x=cx+Math.cos(a)*R*v,y=cy+Math.sin(a)*R*v;ctx.beginPath();ctx.arc(x,y,4,0,Math.PI*2);ctx.fillStyle='#C9A84C';ctx.fill();ctx.strokeStyle=isDark?'#111':'#fff';ctx.lineWidth=1.5;ctx.stroke();});
+  // Draw labels
+  ctx.font='600 12px Geist,system-ui,sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';
+  data.forEach((d,i)=>{const a=angles[i];const lR=R+22;const x=cx+Math.cos(a)*lR,y=cy+Math.sin(a)*lR;ctx.fillStyle=labelColor;ctx.fillText(d.axis,x,y);});
+  // Legend
+  const leg=document.getElementById('radar-legend');
+  const colors=['#C9A84C','#059669','#7C3AED','#DC2626','#0891B2'];
+  leg.innerHTML=data.map((d,i)=>`<div class="radar-leg-item"><div class="radar-leg-dot" style="background:${colors[i%colors.length]}"></div><span>${d.axis}</span><span class="radar-leg-val">${d.score||0}</span></div>`).join('');
+}
+
+// ── RECRUITER HEATMAP ─────────────────────────────────────────────────────────
+function renderHeatmap(sections){
+  const wrap=document.getElementById('heatmap-body');
+  if(!sections||!sections.length){wrap.innerHTML='<div class="history-empty">No section data available.</div>';return;}
+  wrap.innerHTML=sections.map(s=>{
+    const r=s.rating||'medium';
+    const cls=r==='strong'?'hm-strong':r==='weak'?'hm-weak':'hm-medium';
+    const badge=r==='strong'?'strong':r==='weak'?'weak':'medium';
+    const label=r==='strong'?'★★★ Strong':r==='weak'?'⚠ Needs work':'◐ Improve';
+    return`<div class="hm-section"><div class="hm-section-head ${cls}"><span>${s.section||'Section'}</span><span class="hm-badge ${badge}">${label}</span></div><div class="hm-section-body">${s.note||''}<div class="hm-tip">💡 ${s.tip||''}</div></div></div>`;
+  }).join('');
+}
+
+// ── DIFF VIEW ─────────────────────────────────────────────────────────────────
+function renderDiff(original,tailored,addedKws,missingKws){
+  const body=document.getElementById('diff-body');
+  const stats=document.getElementById('diff-stats');
+  if(!tailored){body.innerHTML='<em style="color:var(--ink4)">No tailored resume generated.</em>';return;}
+
+  // Highlight keywords that were added
+  const allKws=[...(addedKws||[]),...(missingKws||[])];
+  let highlighted=tailored;
+  // Escape for HTML
+  highlighted=highlighted.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+
+  // Mark keyword additions (words in tailored that weren't in original)
+  const origLower=original.toLowerCase();
+  allKws.forEach(kw=>{
+    if(!kw)return;
+    const kwLower=kw.toLowerCase();
+    const wasPresent=origLower.includes(kwLower);
+    if(!wasPresent){
+      // highlight as newly added keyword
+      const escaped=kw.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+      highlighted=highlighted.replace(new RegExp('('+escaped+')','gi'),'<mark class="diff-kw">$1</mark>');
+    }
+  });
+
+  // Find lines that are substantially different from original — mark as improved
+  const origLines=original.split('\n').map(l=>l.trim().toLowerCase());
+  const newLines=highlighted.split('\n');
+  const diffLines=newLines.map(line=>{
+    const plain=line.replace(/<[^>]+>/g,'').toLowerCase().trim();
+    if(!plain||plain.length<20)return line;
+    // Check similarity to any original line
+    const similar=origLines.some(ol=>ol.length>20&&similarity(ol,plain)>0.75);
+    if(!similar&&plain.length>30){
+      // New/improved line — wrap in add span if not already highlighted
+      if(!line.includes('diff-kw')&&!line.includes('diff-add')){
+        return`<span class="diff-add">${line}</span>`;
+      }
+    }
+    return line;
+  });
+
+  body.innerHTML=diffLines.join('\n');
+
+  // Stats
+  const addedCount=(addedKws||[]).length;
+  const improvedCount=diffLines.filter(l=>l.includes('diff-add')).length;
+  const kwCount=diffLines.filter(l=>l.includes('diff-kw')).length;
+  stats.innerHTML=`
+    <div class="diff-stat"><div class="diff-stat-dot" style="background:var(--emerald)"></div>${improvedCount} lines improved</div>
+    <div class="diff-stat"><div class="diff-stat-dot" style="background:var(--gold)"></div>${addedCount} keywords added</div>
+    <div class="diff-stat"><div class="diff-stat-dot" style="background:#7C3AED"></div>${kwCount} keyword highlights</div>`;
+}
+
+function similarity(a,b){
+  if(!a||!b)return 0;
+  const la=a.split(' '),lb=b.split(' ');
+  const sa=new Set(la),sb=new Set(lb);
+  let common=0;sa.forEach(w=>{if(sb.has(w))common++;});
+  return common/Math.max(sa.size,sb.size,1);
+}
+
+// ── HISTORY (localStorage) ────────────────────────────────────────────────────
+function saveToHistory(d){
+  try{
+    const item={
+      id:Date.now(),
+      date:new Date().toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}),
+      jobTitle:d.jobTitle||'Untitled role',
+      atsScore:d.atsScore||0,
+      atsGrade:d.atsGrade||'',
+      summary:d.summary||''
+    };
+    let history=JSON.parse(localStorage.getItem('hr_history')||'[]');
+    history.unshift(item);
+    if(history.length>20)history=history.slice(0,20);
+    localStorage.setItem('hr_history',JSON.stringify(history));
+    const dot=document.getElementById('save-dot');
+    const txt=document.getElementById('save-status-txt');
+    dot.classList.add('saved');
+    txt.textContent='Saved locally';
+    showToast('Analysis saved to history');
+    // Attempt Supabase save if configured
+    if(SUPABASE_URL&&SUPABASE_KEY)saveToSupabase(item,d);
+  }catch(e){console.warn('History save failed:',e);}
+}
+
+async function saveToSupabase(meta,full){
+  try{
+    const resp=await fetch(`${SUPABASE_URL}/rest/v1/analyses`,{
+      method:'POST',
+      headers:{
+        'Content-Type':'application/json',
+        'apikey':SUPABASE_KEY,
+        'Authorization':'Bearer '+SUPABASE_KEY,
+        'Prefer':'return=minimal'
+      },
+      body:JSON.stringify({
+        session_id:sessionId,
+        job_title:meta.jobTitle,
+        ats_score:meta.atsScore,
+        ats_grade:meta.atsGrade,
+        summary:meta.summary,
+        result_json:JSON.stringify(full),
+        created_at:new Date().toISOString()
+      })
+    });
+    if(resp.ok){
+      document.getElementById('save-status-txt').textContent='Saved to cloud';
+      showToast('Synced to cloud ☁️');
+    }
+  }catch(e){console.warn('Supabase save failed (continuing with local):',e);}
+}
+
+function toggleHistory(){
+  const drawer=document.getElementById('history-drawer');
+  const btn=document.getElementById('history-toggle-btn');
+  const open=drawer.classList.toggle('open');
+  btn.innerHTML=open
+    ?`<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="18 15 12 9 6 15"/></svg> Hide history`
+    :`<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> View history`;
+  if(open)renderHistoryList();
+}
+
+function renderHistoryList(){
+  const wrap=document.getElementById('history-list-wrap');
+  let history=[];
+  try{history=JSON.parse(localStorage.getItem('hr_history')||'[]');}catch(e){}
+  if(!history.length){wrap.innerHTML='<div class="history-empty">No past analyses yet. Run your first analysis above!</div>';return;}
+  wrap.innerHTML=`<div class="history-list">${history.map(h=>{
+    const col=h.atsScore>=75?'#059669':h.atsScore>=50?'#C9A84C':'#DC2626';
+    return`<div class="history-item" onclick="loadHistoryItem(${h.id})" title="${h.summary||''}">
+      <div class="history-item-left">
+        <div class="history-item-role">${h.jobTitle}</div>
+        <div class="history-item-date">${h.date} · ${h.atsGrade}</div>
+      </div>
+      <div class="history-item-score" style="color:${col}">${h.atsScore}</div>
+    </div>`;
+  }).join('')}</div>`;
+}
+
+function loadHistoryItem(id){
+  // For now just highlight — full reload would need stored result_json
+  showToast('Tip: Supabase cloud storage enables full result reload');
+}
+
+// ── UI HELPERS ────────────────────────────────────────────────────────────────
+function showRTab(n){
+  const t=['overview','breakdown','radar','bullets','heatmap','resume'];
+  document.querySelectorAll('.rtab').forEach((el,i)=>el.classList.toggle('active',t[i]===n));
+  document.querySelectorAll('.rtab-panel').forEach((el,i)=>el.classList.toggle('active',t[i]===n));
+  // Redraw radar when switching to it (fixes canvas sizing in hidden tab)
+  if(n==='radar'&&lastResult){setTimeout(()=>drawRadar(lastResult.radarData||[]),50);}
+}
+function copyResume(){navigator.clipboard.writeText(document.getElementById('res-box').textContent||'').then(()=>showToast('Copied to clipboard'));}
+function downloadResume(){const t=document.getElementById('res-box').textContent||'';const b=new Blob([t],{type:'text/plain'});const u=URL.createObjectURL(b);const a=document.createElement('a');a.href=u;a.download='tailored-resume.txt';a.click();URL.revokeObjectURL(u);showToast('Downloaded!');}
+function shareApp(){navigator.clipboard.writeText(window.location.href).then(()=>showToast('Link copied!'));}
+function showToast(msg){const t=document.getElementById('toast');document.getElementById('toast-msg').textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2800);}
+function resetApp(){
+  rText='';jText='';rFile=null;jFile=null;lastResult=null;
+  ['rf','jf'].forEach(id=>document.getElementById(id).value='');
+  ['r','j'].forEach(t=>{
+    document.getElementById(t+'z').classList.remove('has-file');
+    document.getElementById(t+'z-icon').textContent=t==='r'?'📄':'💼';
+    document.getElementById(t+'z-title').textContent=t==='r'?'Click or drag resume here':'Click or drag JD here';
+    document.getElementById(t+'z-sub').style.display='';
+    document.getElementById(t+'z-fname').style.display='none';
+  });
+  document.getElementById('rt').value='';document.getElementById('jt').value='';
+  document.getElementById('err-box').style.display='none';
+  setStep(1);
+}
+function toggleTheme(){
+  const d=document.body.classList.toggle('dark');
+  const b=document.getElementById('theme-btn');
+  b.innerHTML=d?'<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/></svg> Light':'<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg> Dark';
+  localStorage.setItem('theme',d?'dark':'light');
+  if(lastResult)setTimeout(()=>drawRadar(lastResult.radarData||[]),50);
+}
+if(localStorage.getItem('theme')==='dark'){document.body.classList.add('dark');setTimeout(()=>{const b=document.getElementById('theme-btn');if(b)b.innerHTML='<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/></svg> Light';},0);}
+window.addEventListener('scroll',()=>{document.getElementById('nav').classList.toggle('scrolled',window.scrollY>10);});
+const ro=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible');});},{threshold:.1});
+document.querySelectorAll('.reveal').forEach(el=>ro.observe(el));
+let dc=0;
+function setupDD(id,type){const z=document.getElementById(id);if(!z)return;z.addEventListener('dragenter',e=>{e.preventDefault();z.classList.add('drag-over');});z.addEventListener('dragover',e=>{e.preventDefault();z.classList.add('drag-over');});z.addEventListener('dragleave',e=>{if(!z.contains(e.relatedTarget))z.classList.remove('drag-over');});z.addEventListener('drop',e=>{e.preventDefault();z.classList.remove('drag-over');const f=e.dataTransfer.files[0];if(f)dropFile(f,type);});}
+function dropFile(f,type){if(type==='r')rFile=f;else jFile=f;document.getElementById(type+'z').classList.add('has-file');document.getElementById(type+'z-icon').textContent='✅';document.getElementById(type+'z-title').textContent='File ready';document.getElementById(type+'z-sub').style.display='none';const fn=document.getElementById(type+'z-fname');fn.textContent=f.name;fn.style.display='block';if(type==='j')document.getElementById('jt').value='';}
+const ov=document.getElementById('drag-overlay');
+document.addEventListener('dragenter',e=>{dc++;if(e.dataTransfer&&e.dataTransfer.types.includes('Files'))ov.style.display='flex';});
+document.addEventListener('dragleave',()=>{dc--;if(dc<=0){dc=0;ov.style.display='none';}});
+document.addEventListener('dragover',e=>e.preventDefault());
+document.addEventListener('drop',e=>{e.preventDefault();dc=0;ov.style.display='none';});
+setupDD('rz','r');setupDD('jz','j');
+</script>
+</body>
+</html>
