@@ -441,6 +441,46 @@ body.dark .diff-kw{background:rgba(201,168,76,.15);color:var(--gold)}
 .hm-tip{font-size:11px;font-style:italic;color:var(--ink4);margin-top:5px}
 body.dark .hm-section-body{background:var(--bg2)}
 
+/* ── MODE TOGGLE ── */
+.mode-toggle{display:flex;background:var(--bg2);border:1px solid var(--border);border-radius:50px;padding:4px;gap:4px;margin-bottom:1.5rem;width:fit-content}
+.mode-btn{padding:8px 20px;border-radius:50px;border:none;font-size:13px;font-weight:600;cursor:pointer;font-family:var(--font);transition:all .2s;color:var(--ink3);background:transparent}
+.mode-btn.active{background:var(--ink);color:var(--bg);box-shadow:var(--shadow-sm)}
+.mode-btn:hover:not(.active){color:var(--ink)}
+
+/* ── GENERATE TOOLS ── */
+.gen-section{margin-top:2rem;padding-top:1.5rem;border-top:2px dashed var(--border)}
+.gen-section-title{font-size:13px;font-weight:700;color:var(--ink4);text-transform:uppercase;letter-spacing:.08em;margin-bottom:1rem;display:flex;align-items:center;gap:7px}
+.gen-tabs{display:flex;border-bottom:1px solid var(--border);margin-bottom:1.25rem;overflow-x:auto;gap:0}
+.gen-tab{padding:9px 16px;font-size:13px;font-weight:500;color:var(--ink3);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;white-space:nowrap;transition:all .15s;display:flex;align-items:center;gap:5px}
+.gen-tab:hover{color:var(--ink2)}
+.gen-tab.active{color:var(--ink);border-bottom-color:var(--emerald);font-weight:600}
+.gen-panel{display:none}
+.gen-panel.active{display:block}
+.gen-output{background:var(--bg);border:1px solid var(--border);border-radius:var(--rl);padding:1.5rem;font-size:13px;line-height:1.9;color:var(--ink);white-space:pre-wrap;max-height:420px;overflow-y:auto;font-family:var(--font);margin-top:1rem}
+.gen-output::-webkit-scrollbar{width:4px}
+.gen-output::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+.gen-empty{text-align:center;padding:2.5rem;color:var(--ink4);font-size:13px}
+.gen-empty-icon{font-size:32px;margin-bottom:.75rem}
+.gen-actions{display:flex;gap:7px;margin-top:.875rem;flex-wrap:wrap}
+.btn-generate{background:var(--emerald);color:white;border:none;border-radius:50px;padding:10px 22px;font-size:13px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:7px;transition:all .2s;font-family:var(--font)}
+.btn-generate:hover{background:#047857;transform:translateY(-1px);box-shadow:var(--shadow)}
+.btn-generate:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.gen-loader{display:none;align-items:center;gap:10px;padding:.75rem 0;font-size:13px;color:var(--ink3)}
+.gen-loader.show{display:flex}
+.download-row{display:flex;gap:7px;flex-wrap:wrap;margin-top:.875rem}
+.btn-download-pdf{background:var(--coral-light);color:var(--coral);border:1px solid rgba(220,38,38,.2);border-radius:var(--r);padding:7px 14px;font-size:13px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:5px;transition:all .15s;font-family:var(--font)}
+.btn-download-pdf:hover{background:#fee2e2;border-color:rgba(220,38,38,.3)}
+.btn-download-docx{background:rgba(37,99,235,.08);color:#2563eb;border:1px solid rgba(37,99,235,.2);border-radius:var(--r);padding:7px 14px;font-size:13px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:5px;transition:all .15s;font-family:var(--font)}
+.btn-download-docx:hover{background:rgba(37,99,235,.12);border-color:rgba(37,99,235,.3)}
+body.dark .btn-download-pdf{background:rgba(220,38,38,.1);color:#fca5a5}
+body.dark .btn-download-docx{background:rgba(37,99,235,.1);color:#93c5fd}
+.iq-list{display:flex;flex-direction:column;gap:10px;margin-top:1rem}
+.iq-item{background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:1rem 1.25rem;box-shadow:var(--shadow-xs)}
+.iq-cat{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--ink4);margin-bottom:5px}
+.iq-q{font-size:13px;color:var(--ink);line-height:1.6;font-weight:500}
+.iq-tip{font-size:11px;color:var(--ink4);margin-top:5px;font-style:italic}
+body.dark .iq-item{background:var(--bg2)}
+
 /* ── HISTORY PANEL ── */
 .history-btn{background:var(--white);color:var(--ink3);border:1px solid var(--border);border-radius:var(--r);padding:7px 14px;font-size:13px;font-weight:500;cursor:pointer;display:inline-flex;align-items:center;gap:5px;transition:all .15s;font-family:var(--font)}
 .history-btn:hover{border-color:var(--gold);color:var(--gold-dark)}
@@ -710,6 +750,11 @@ body.dark .history-drawer,.dark .history-item{background:var(--bg2)}
     <div class="app-body">
       <!-- UPLOAD -->
       <div id="panel-upload">
+        <!-- Mode Toggle -->
+        <div class="mode-toggle">
+          <button class="mode-btn active" id="mode-analyze" onclick="setMode('analyze')">🎯 Analyze vs JD</button>
+          <button class="mode-btn" id="mode-enhance" onclick="setMode('enhance')">✨ Enhance Resume</button>
+        </div>
         <div class="upload-grid">
           <div>
             <label class="field-label">Your resume <span class="field-sub">PDF, DOCX, TXT</span></label>
@@ -721,7 +766,7 @@ body.dark .history-drawer,.dark .history-item{background:var(--bg2)}
               <div class="uz-fname" id="rz-fname"></div>
             </div>
           </div>
-          <div>
+          <div id="jd-upload-col">
             <label class="field-label">Job description <span class="field-sub">or paste below</span></label>
             <div class="upload-zone" id="jz">
               <input type="file" accept=".pdf,.txt,.md,.doc,.docx" id="jf" onchange="pickFile('j')">
@@ -738,18 +783,18 @@ body.dark .history-drawer,.dark .history-item{background:var(--bg2)}
             <label class="field-label" for="rt" style="margin-bottom:6px;display:block">Resume text</label>
             <textarea class="app-ta" id="rt" placeholder="Paste your resume text here..."></textarea>
           </div>
-          <div>
+          <div id="jd-paste-col">
             <label class="field-label" for="jt" style="margin-bottom:6px;display:block">Job description text</label>
             <textarea class="app-ta" id="jt" placeholder="Paste the full job description..."></textarea>
           </div>
         </div>
         <div class="err-box" id="err-box"></div>
         <div class="action-row">
-          <button class="btn-run" onclick="runAnalysis()">
+          <button class="btn-run" id="run-btn" onclick="runAnalysis()">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
             Run full analysis
           </button>
-          <span class="hint">~15 seconds · Free · No sign-up</span>
+          <span class="hint" id="run-hint">~15 seconds · Free · No sign-up</span>
         </div>
       </div>
       <!-- LOADING -->
@@ -855,22 +900,115 @@ body.dark .history-drawer,.dark .history-item{background:var(--bg2)}
         <!-- RESUME DIFF TAB -->
         <div class="rtab-panel" id="rtp-resume">
           <div class="diff-header">
-            <p style="font-size:13px;color:var(--ink3);letter-spacing:-.1px">Tailored resume with changes highlighted — green = added/improved, strikethrough = removed, gold = keywords integrated.</p>
+            <p style="font-size:13px;color:var(--ink3);letter-spacing:-.1px">Tailored resume with changes highlighted — green = added/improved, gold = keywords integrated.</p>
             <div class="res-actions" style="margin:0">
               <button class="btn-outline" onclick="copyResume()">
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
                 Copy clean
               </button>
-              <button class="btn-outline" onclick="downloadResume()">
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                Download .txt
-              </button>
             </div>
+          </div>
+          <div class="download-row">
+            <button class="btn-download-pdf" onclick="downloadPDF()">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+              Download PDF
+            </button>
+            <button class="btn-download-docx" onclick="downloadDOCX()">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+              Download DOCX
+            </button>
+            <button class="btn-outline" onclick="downloadResume()">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              Download .txt
+            </button>
           </div>
           <div class="diff-stats" id="diff-stats"></div>
           <div class="diff-body" id="diff-body"></div>
-          <!-- Hidden clean version for copy/download -->
           <div style="display:none" id="res-box"></div>
+        </div>
+
+        <!-- GENERATE TOOLS SECTION -->
+        <div class="gen-section" id="gen-section" style="display:none">
+          <div class="gen-section-title">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            AI Generation Tools
+          </div>
+          <div class="gen-tabs">
+            <div class="gen-tab active" onclick="showGenTab('coverletter')">📝 Cover Letter</div>
+            <div class="gen-tab" onclick="showGenTab('pitch')">🎤 60-sec Pitch</div>
+            <div class="gen-tab" onclick="showGenTab('questions')">❓ Interview Questions</div>
+            <div class="gen-tab" onclick="showGenTab('linkedin')">💼 LinkedIn About</div>
+          </div>
+
+          <!-- Cover Letter -->
+          <div class="gen-panel active" id="gp-coverletter">
+            <p style="font-size:13px;color:var(--ink3);margin-bottom:1rem">Personalized cover letter based on your resume and the job description.</p>
+            <button class="btn-generate" onclick="generateContent('coverletter')" id="btn-gen-coverletter">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+              Generate Cover Letter
+            </button>
+            <div class="gen-loader" id="loader-coverletter">
+              <div class="loader-ring" style="width:20px;height:20px;border-width:2px"></div>
+              Generating cover letter...
+            </div>
+            <div class="gen-output" id="out-coverletter" style="display:none"></div>
+            <div class="gen-actions" id="actions-coverletter" style="display:none">
+              <button class="btn-outline" onclick="copyGen('coverletter')">Copy</button>
+              <button class="btn-outline" onclick="downloadGen('coverletter','cover-letter.txt')">Download .txt</button>
+            </div>
+          </div>
+
+          <!-- 60-sec Pitch -->
+          <div class="gen-panel" id="gp-pitch">
+            <p style="font-size:13px;color:var(--ink3);margin-bottom:1rem">A tight 60-second elevator pitch tailored to this role — perfect for interviews and networking.</p>
+            <button class="btn-generate" onclick="generateContent('pitch')" id="btn-gen-pitch">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="10 15 15 12 10 9 10 15"/></svg>
+              Generate 60-sec Pitch
+            </button>
+            <div class="gen-loader" id="loader-pitch">
+              <div class="loader-ring" style="width:20px;height:20px;border-width:2px"></div>
+              Crafting your pitch...
+            </div>
+            <div class="gen-output" id="out-pitch" style="display:none"></div>
+            <div class="gen-actions" id="actions-pitch" style="display:none">
+              <button class="btn-outline" onclick="copyGen('pitch')">Copy</button>
+              <button class="btn-outline" onclick="downloadGen('pitch','60sec-pitch.txt')">Download .txt</button>
+            </div>
+          </div>
+
+          <!-- Interview Questions -->
+          <div class="gen-panel" id="gp-questions">
+            <p style="font-size:13px;color:var(--ink3);margin-bottom:1rem">Predicted interview questions based on the JD and your resume gaps — with suggested answer angles.</p>
+            <button class="btn-generate" onclick="generateContent('questions')" id="btn-gen-questions">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+              Predict Interview Questions
+            </button>
+            <div class="gen-loader" id="loader-questions">
+              <div class="loader-ring" style="width:20px;height:20px;border-width:2px"></div>
+              Predicting questions...
+            </div>
+            <div class="iq-list" id="out-questions" style="display:none"></div>
+            <div class="gen-actions" id="actions-questions" style="display:none">
+              <button class="btn-outline" onclick="copyGen('questions')">Copy all questions</button>
+            </div>
+          </div>
+
+          <!-- LinkedIn About -->
+          <div class="gen-panel" id="gp-linkedin">
+            <p style="font-size:13px;color:var(--ink3);margin-bottom:1rem">A punchy LinkedIn About section positioning you for this type of role — ready to paste.</p>
+            <button class="btn-generate" onclick="generateContent('linkedin')" id="btn-gen-linkedin">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+              Generate LinkedIn About
+            </button>
+            <div class="gen-loader" id="loader-linkedin">
+              <div class="loader-ring" style="width:20px;height:20px;border-width:2px"></div>
+              Writing your About section...
+            </div>
+            <div class="gen-output" id="out-linkedin" style="display:none"></div>
+            <div class="gen-actions" id="actions-linkedin" style="display:none">
+              <button class="btn-outline" onclick="copyGen('linkedin')">Copy</button>
+            </div>
+          </div>
         </div>
 
         <div class="res-footer">
@@ -1018,7 +1156,7 @@ ${jText.slice(0,3500)}`;
     const txt=data.content.map(c=>c.text||'').join('');
     const parsed=JSON.parse(txt.replace(/```json|```/g,'').trim());
     stopLoader();lastResult=parsed;renderResults(parsed);setStep(3);
-    saveToHistory(parsed);
+    saveToHistory(parsed);showGenSection();
   }catch(e){stopLoader();setStep(1);showErr('Analysis failed: '+e.message);}
 }
 
@@ -1279,6 +1417,8 @@ function resetApp(){
   });
   document.getElementById('rt').value='';document.getElementById('jt').value='';
   document.getElementById('err-box').style.display='none';
+  const gs=document.getElementById('gen-section');if(gs)gs.style.display='none';
+  genCache={};
   setStep(1);
 }
 function toggleTheme(){
@@ -1301,6 +1441,135 @@ document.addEventListener('dragleave',()=>{dc--;if(dc<=0){dc=0;ov.style.display=
 document.addEventListener('dragover',e=>e.preventDefault());
 document.addEventListener('drop',e=>{e.preventDefault();dc=0;ov.style.display='none';});
 setupDD('rz','r');setupDD('jz','j');
+
+// ── MODE TOGGLE ──────────────────────────────────────────────────────────────
+let currentMode='analyze';
+function setMode(mode){
+  currentMode=mode;
+  document.getElementById('mode-analyze').classList.toggle('active',mode==='analyze');
+  document.getElementById('mode-enhance').classList.toggle('active',mode==='enhance');
+  const jdUp=document.getElementById('jd-upload-col');
+  const jdPaste=document.getElementById('jd-paste-col');
+  const runBtn=document.getElementById('run-btn');
+  const hint=document.getElementById('run-hint');
+  if(mode==='enhance'){
+    jdUp.style.display='none';jdPaste.style.display='none';
+    runBtn.innerHTML='<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg> Enhance my resume';
+    hint.textContent='Rewrites bullets, strengthens language — no JD needed';
+  } else {
+    jdUp.style.display='';jdPaste.style.display='';
+    runBtn.innerHTML='<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg> Run full analysis';
+    hint.textContent='~15 seconds · Free · No sign-up';
+  }
+}
+
+// ── GENERATE TOOLS ────────────────────────────────────────────────────────────
+function showGenTab(name){
+  const tabs=['coverletter','pitch','questions','linkedin'];
+  document.querySelectorAll('.gen-tab').forEach((el,i)=>el.classList.toggle('active',tabs[i]===name));
+  tabs.forEach(t=>{document.getElementById('gp-'+t).classList.toggle('active',t===name);});
+}
+
+const genPrompts={
+  coverletter:(r,j)=>`Write a professional, personalized cover letter based on this resume and job description. Make it compelling, specific, and under 350 words. Start with a strong opening, highlight 2-3 key achievements that match the role, and close with confidence. No generic phrases like "I am writing to apply". Return only the cover letter text.\n\nRESUME:\n${r.slice(0,4000)}\n\nJOB DESCRIPTION:\n${j.slice(0,2000)}`,
+  pitch:(r,j)=>`Write a punchy 60-second elevator pitch (around 150 words when spoken aloud at normal pace) for this person targeting this role. It should cover: who they are, their biggest relevant achievement, what they bring to this role, and a clear close. Natural, confident tone — not corporate. Return only the pitch text.\n\nRESUME:\n${r.slice(0,4000)}\n\nJOB DESCRIPTION:\n${j.slice(0,2000)}`,
+  questions:(r,j)=>`Based on this resume and job description, predict the 8 most likely interview questions. For each, provide: the question, the category (Behavioral/Technical/Situational/Role-specific), and a 1-sentence answer angle tip. Return ONLY valid JSON array: [{"question":"...","category":"...","tip":"..."}]. No markdown.\n\nRESUME:\n${r.slice(0,4000)}\n\nJOB DESCRIPTION:\n${j.slice(0,2000)}`,
+  linkedin:(r,j)=>`Write a compelling LinkedIn About section (200-250 words) for this person positioning them for this type of role. First-person voice, starts with a hook (not "I am a..."), includes 2-3 quantified achievements, ends with what they're looking for. Return only the About section text.\n\nRESUME:\n${r.slice(0,4000)}\n\nJOB DESCRIPTION:\n${j.slice(0,2000)}`
+};
+
+const genPromptEnhance={
+  coverletter:(r)=>`Write a strong general cover letter showcasing this person's top achievements and skills. Under 350 words, compelling and specific. Return only the cover letter text.\n\nRESUME:\n${r.slice(0,5000)}`,
+  pitch:(r)=>`Write a 60-second elevator pitch (150 words) for this person. Who they are, biggest achievement, what they offer, confident close. Return only the pitch.\n\nRESUME:\n${r.slice(0,5000)}`,
+  questions:(r)=>`Based on this resume, predict 8 likely interview questions. JSON array: [{"question":"...","category":"...","tip":"..."}]. No markdown.\n\nRESUME:\n${r.slice(0,5000)}`,
+  linkedin:(r)=>`Write a LinkedIn About section (200-250 words). First-person, hook opening, 2-3 quantified achievements, ends with what they're seeking. Return only the text.\n\nRESUME:\n${r.slice(0,5000)}`
+};
+
+let genCache={};
+
+async function generateContent(type){
+  const r=rText||document.getElementById('rt').value.trim();
+  if(!r){showToast('Run analysis first or paste your resume');return;}
+  const j=jText||document.getElementById('jt').value.trim();
+  const cacheKey=type+'_'+r.slice(0,80);
+  if(genCache[cacheKey]){renderGenOutput(type,genCache[cacheKey]);return;}
+  const btn=document.getElementById('btn-gen-'+type);
+  const loader=document.getElementById('loader-'+type);
+  btn.disabled=true;loader.classList.add('show');
+  const prompt=(currentMode==='enhance'||!j)?genPromptEnhance[type](r):genPrompts[type](r,j);
+  try{
+    const resp=await fetch('/.netlify/functions/analyze',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-haiku-4-5-20251001',max_tokens:2000,messages:[{role:'user',content:prompt}]})});
+    const raw=await resp.text();
+    const data=JSON.parse(raw);
+    if(data.error)throw new Error(data.error);
+    const txt=data.content.map(c=>c.text||'').join('');
+    genCache[cacheKey]=txt;
+    renderGenOutput(type,txt);
+  }catch(e){showToast('Generation failed: '+e.message);}
+  finally{btn.disabled=false;loader.classList.remove('show');}
+}
+
+function renderGenOutput(type,txt){
+  if(type==='questions'){
+    const out=document.getElementById('out-questions');
+    try{
+      const qs=JSON.parse(txt.replace(/```json|```/g,'').trim());
+      out.innerHTML=qs.map(q=>`<div class="iq-item"><div class="iq-cat">${q.category||'Question'}</div><div class="iq-q">${q.question}</div><div class="iq-tip">💡 ${q.tip||''}</div></div>`).join('');
+    }catch(e){out.innerHTML=`<div style="white-space:pre-wrap;font-size:13px;color:var(--ink)">${txt}</div>`;}
+    out.style.display='flex';out.style.flexDirection='column';
+  } else {
+    const out=document.getElementById('out-'+type);
+    out.textContent=txt;out.style.display='block';
+  }
+  document.getElementById('actions-'+type).style.display='flex';
+}
+
+function copyGen(type){
+  const el=document.getElementById('out-'+type);
+  navigator.clipboard.writeText(el.textContent||el.innerText||'').then(()=>showToast('Copied!'));
+}
+
+function downloadGen(type,filename){
+  const el=document.getElementById('out-'+type);
+  const b=new Blob([el.textContent||''],{type:'text/plain'});
+  const u=URL.createObjectURL(b);const a=document.createElement('a');
+  a.href=u;a.download=filename;a.click();URL.revokeObjectURL(u);showToast('Downloaded!');
+}
+
+// ── PDF DOWNLOAD ──────────────────────────────────────────────────────────────
+function downloadPDF(){
+  const content=document.getElementById('res-box').textContent||'';
+  if(!content){showToast('No resume to download');return;}
+  const win=window.open('','_blank');
+  win.document.write(`<!DOCTYPE html><html><head><title>Tailored Resume</title><style>body{font-family:Georgia,serif;max-width:800px;margin:40px auto;padding:0 40px;font-size:14px;line-height:1.8;color:#1a1a1a}pre{white-space:pre-wrap;font-family:Georgia,serif;font-size:14px}@media print{body{margin:0;padding:20px}}</style></head><body><pre>${content.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}</pre></body></html>`);
+  win.document.close();
+  setTimeout(()=>{win.print();},500);
+  showToast('Print dialog — choose "Save as PDF"');
+}
+
+// ── RTF/DOCX DOWNLOAD ─────────────────────────────────────────────────────────
+function downloadDOCX(){
+  const content=document.getElementById('res-box').textContent||'';
+  if(!content){showToast('No resume to download');return;}
+  const lines=content.split('\n');
+  let rtf='{\\rtf1\\ansi\\deff0{\\fonttbl{\\f0 Calibri;}}{\\colortbl;\\red26\\green25\\blue23;}\\f0\\fs24\\sa180 ';
+  lines.forEach(line=>{
+    const esc=line.replace(/\\/g,'\\\\').replace(/\{/g,'\\{').replace(/\}/g,'\\}');
+    if(!esc.trim()){rtf+='\\par ';}
+    else if(/^[A-Z][A-Z\s\-]{2,40}$/.test(esc.trim())){rtf+=`{\\b\\fs28 ${esc}}\\par `;}
+    else{rtf+=esc+'\\par ';}
+  });
+  rtf+='}';
+  const b=new Blob([rtf],{type:'application/rtf'});
+  const u=URL.createObjectURL(b);const a=document.createElement('a');
+  a.href=u;a.download='tailored-resume.rtf';a.click();URL.revokeObjectURL(u);
+  showToast('Downloaded RTF — opens in Word & Google Docs');
+}
+
+// Show generate section after results
+function showGenSection(){
+  const gs=document.getElementById('gen-section');
+  if(gs)gs.style.display='block';
+}
 </script>
 </body>
 </html>
