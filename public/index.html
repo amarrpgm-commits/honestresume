@@ -1,218 +1,1042 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HonestResume — AI Resume Analyzer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-HonestResume
-Features
+    :root {
+      --bg: #0a0a0f;
+      --surface: #111118;
+      --surface2: #18181f;
+      --border: #22222e;
+      --border2: #2e2e3e;
+      --text: #f0f0f5;
+      --muted: #6b6b80;
+      --muted2: #9090a8;
+      --accent: #7c6aff;
+      --accent2: #a78bfa;
+      --accent-glow: rgba(124, 106, 255, 0.15);
+      --green: #34d399;
+      --green-bg: rgba(52, 211, 153, 0.08);
+      --red: #f87171;
+      --red-bg: rgba(248, 113, 113, 0.08);
+      --amber: #fbbf24;
+      --amber-bg: rgba(251, 191, 36, 0.08);
+      --mono: 'DM Mono', monospace;
+      --sans: 'DM Sans', system-ui, sans-serif;
+    }
 
-📊
-ATS Scoring
-4-category honest score
-🔍
-Keyword Gap Analysis
-Missing terms from JD
-✍️
-Bullet Rewrites
-AI-improved with metrics
-🔥
-Recruiter Heatmap
-Section-by-section rating
+    html { scroll-behavior: smooth; }
 
-📝
-Cover Letter + Pitch
-4 AI generators in one click
-📄
-Tailored Resume
-Full rewrite with diff view
-⭐
-STAR Story Generator
-Interview-ready narratives
-How it works
-Try free
-✓ Always free
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--sans);
+      font-size: 15px;
+      line-height: 1.6;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
 
-Dark Analyze resume →
+    /* ── NOISE TEXTURE ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.4;
+    }
 
+    /* ── AMBIENT GLOW ── */
+    .ambient {
+      position: fixed;
+      width: 600px; height: 600px;
+      border-radius: 50%;
+      filter: blur(120px);
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.12;
+    }
+    .ambient-1 { background: var(--accent); top: -200px; right: -100px; }
+    .ambient-2 { background: #06b6d4; bottom: -200px; left: -100px; opacity: 0.07; }
 
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0;
+      z-index: 100;
+      border-bottom: 1px solid var(--border);
+      background: rgba(10, 10, 15, 0.85);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+    }
+    .nav-inner {
+      max-width: 1100px; margin: 0 auto;
+      padding: 0 24px;
+      height: 60px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .logo {
+      display: flex; align-items: center; gap: 10px;
+      font-size: 17px; font-weight: 600; letter-spacing: -0.02em;
+      text-decoration: none; color: var(--text);
+    }
+    .logo-mark {
+      width: 30px; height: 30px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px;
+    }
+    .badge {
+      font-family: var(--mono);
+      font-size: 10px;
+      padding: 3px 8px;
+      border-radius: 4px;
+      border: 1px solid var(--border2);
+      color: var(--muted2);
+      letter-spacing: 0.05em;
+    }
 
-AI-POWERED · FREE FOREVER
-The resume tool that tells the truth
-ATS scoring, keyword gaps, bullet rewrites, and a fully tailored resume — no paywalls, no sugar-coating, no BS. Because job searching is hard enough.
+    /* ── WRAPPER ── */
+    .wrapper {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 24px;
+      position: relative;
+      z-index: 1;
+    }
 
-Analyze my resume — free See how it works A R K S
-Thousands of job seekers get honest feedback here
-🎯
-ATS Score
-Analyzed in seconds
-↑ 14pts
-Resume Analysis
+    /* ── HERO ── */
+    .hero {
+      padding: 140px 0 80px;
+      text-align: center;
+    }
+    .hero-eyebrow {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      color: var(--accent2);
+      border: 1px solid rgba(124,106,255,0.25);
+      background: rgba(124,106,255,0.06);
+      padding: 5px 14px;
+      border-radius: 20px;
+      margin-bottom: 28px;
+    }
+    .hero-eyebrow::before {
+      content: '';
+      width: 6px; height: 6px;
+      background: var(--accent2);
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(0.8); }
+    }
+    .hero h1 {
+      font-size: clamp(36px, 6vw, 68px);
+      font-weight: 600;
+      letter-spacing: -0.04em;
+      line-height: 1.05;
+      margin-bottom: 20px;
+    }
+    .hero h1 em {
+      font-style: normal;
+      background: linear-gradient(135deg, var(--accent) 0%, var(--accent2) 50%, #60a5fa 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .hero p {
+      font-size: 17px;
+      color: var(--muted2);
+      max-width: 480px;
+      margin: 0 auto 48px;
+      font-weight: 300;
+      line-height: 1.7;
+    }
 
-Excellent match
+    /* ── UPLOAD CARD ── */
+    .upload-card {
+      max-width: 720px;
+      margin: 0 auto;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 40px;
+      position: relative;
+      overflow: hidden;
+    }
+    .upload-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--accent), transparent);
+      opacity: 0.5;
+    }
 
-92
-ATS Score
-Top 10% of resumes
+    .drop-zone {
+      border: 1.5px dashed var(--border2);
+      border-radius: 14px;
+      padding: 40px 24px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      position: relative;
+    }
+    .drop-zone:hover, .drop-zone.drag-over {
+      border-color: var(--accent);
+      background: var(--accent-glow);
+    }
+    .drop-zone input { display: none; }
+    .drop-icon {
+      width: 48px; height: 48px;
+      margin: 0 auto 16px;
+      background: var(--surface2);
+      border: 1px solid var(--border2);
+      border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px;
+    }
+    .drop-title { font-size: 15px; font-weight: 500; margin-bottom: 4px; }
+    .drop-sub { font-size: 13px; color: var(--muted); }
 
-Excellent
-Keyword match
+    .file-slots {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 20px;
+    }
+    .file-slot {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px 16px;
+      cursor: pointer;
+      transition: border-color 0.2s;
+    }
+    .file-slot:hover { border-color: var(--border2); }
+    .file-slot.has-file { border-color: rgba(52, 211, 153, 0.3); }
+    .slot-label {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.1em;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+    .slot-name {
+      font-size: 13px;
+      color: var(--muted2);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .file-slot.has-file .slot-name { color: var(--green); }
+    .slot-icon { float: right; margin-top: -2px; }
 
-90%
-Experience fit
+    .jd-textarea {
+      width: 100%;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px 16px;
+      color: var(--text);
+      font-family: var(--sans);
+      font-size: 13px;
+      line-height: 1.6;
+      resize: vertical;
+      min-height: 120px;
+      margin-top: 12px;
+      transition: border-color 0.2s;
+      outline: none;
+    }
+    .jd-textarea:focus { border-color: var(--accent); }
+    .jd-textarea::placeholder { color: var(--muted); }
 
-95%
-Skills match
+    .analyze-btn {
+      width: 100%;
+      margin-top: 24px;
+      padding: 16px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      border: none;
+      border-radius: 12px;
+      color: white;
+      font-family: var(--sans);
+      font-size: 15px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+      letter-spacing: -0.01em;
+    }
+    .analyze-btn:hover { opacity: 0.9; transform: translateY(-1px); box-shadow: 0 8px 32px rgba(124,106,255,0.3); }
+    .analyze-btn:active { transform: translateY(0); }
+    .analyze-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
 
-88%
-✓ Program Manager
-✓ Agile
-✓ PMP
-✗ GCC Lead
-✗ Stakeholder
+    /* ── LOADING ── */
+    #loading-screen {
+      display: none;
+      text-align: center;
+      padding: 80px 0;
+    }
+    .loader-ring {
+      width: 64px; height: 64px;
+      border: 2px solid var(--border2);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin: 0 auto 24px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .loading-steps { list-style: none; display: inline-block; text-align: left; margin-top: 24px; }
+    .loading-steps li {
+      font-size: 13px;
+      color: var(--muted);
+      padding: 4px 0;
+      font-family: var(--mono);
+    }
+    .loading-steps li.active { color: var(--accent2); }
+    .loading-steps li.done { color: var(--green); }
+    .loading-steps li::before { content: '·  '; }
+    .loading-steps li.active::before { content: '▸  '; }
+    .loading-steps li.done::before { content: '✓  '; }
 
-5 bullets rewritten
+    /* ── RESULTS ── */
+    #results-screen { display: none; padding: 40px 0 80px; }
 
-Full resume tailored
-📝
-Cover letter ready
-One click generation
+    .results-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 40px;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .back-btn {
+      display: flex; align-items: center; gap: 8px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 8px 16px;
+      color: var(--muted2);
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .back-btn:hover { border-color: var(--border2); color: var(--text); }
 
-Resume never stored
+    /* Score row */
+    .score-row {
+      display: grid;
+      grid-template-columns: 220px 1fr;
+      gap: 24px;
+      margin-bottom: 24px;
+      align-items: start;
+    }
+    @media (max-width: 640px) { .score-row { grid-template-columns: 1fr; } }
 
-No account needed
+    .score-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 32px 24px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .score-card::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0; height: 1px;
+      background: linear-gradient(90deg, transparent, var(--accent), transparent);
+    }
+    .score-ring-wrap {
+      position: relative;
+      width: 120px; height: 120px;
+      margin: 0 auto 16px;
+    }
+    .score-ring-wrap svg { transform: rotate(-90deg); }
+    .score-number {
+      position: absolute;
+      inset: 0;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+    }
+    .score-big { font-size: 36px; font-weight: 600; letter-spacing: -0.04em; }
+    .verdict-label {
+      display: inline-block;
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.1em;
+      padding: 4px 10px;
+      border-radius: 4px;
+      margin-top: 8px;
+    }
+    .verdict-label.strong { background: var(--green-bg); color: var(--green); }
+    .verdict-label.good { background: rgba(96,165,250,0.1); color: #60a5fa; }
+    .verdict-label.needs { background: var(--amber-bg); color: var(--amber); }
+    .verdict-label.poor { background: var(--red-bg); color: var(--red); }
 
-No premium tiers
+    .verdict-reason {
+      font-size: 12px;
+      color: var(--muted2);
+      margin-top: 10px;
+      line-height: 1.5;
+    }
 
-Open source
+    /* Category cards */
+    .cats-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 24px;
+    }
+    .cat-row {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .cat-row:last-child { border-bottom: none; }
+    .cat-name { font-size: 13px; color: var(--muted2); width: 140px; flex-shrink: 0; }
+    .cat-bar-wrap { flex: 1; background: var(--surface2); border-radius: 4px; height: 6px; overflow: hidden; }
+    .cat-bar { height: 100%; border-radius: 4px; transition: width 1s cubic-bezier(0.4,0,0.2,1); width: 0; }
+    .cat-val { font-family: var(--mono); font-size: 13px; font-weight: 500; width: 36px; text-align: right; }
 
-Claude AI powered
+    /* Panels */
+    .panel {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 28px;
+      margin-bottom: 20px;
+    }
+    .panel-title {
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: -0.01em;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .panel-title-icon {
+      width: 28px; height: 28px;
+      border-radius: 7px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px;
+    }
 
-—
-resumes analyzed
-EVERYTHING INCLUDED
-Features others lock behind paywalls
-We show you everything. No "upgrade to see your full score." No tricks.
-📊
-Honest ATS Scoring
-Real score with 4-category breakdown — keyword match, experience, skills, formatting. Not inflated to push an upgrade.
-Score breakdown
-🔍
-Keyword Gap Analysis
-See exactly which keywords from the JD are in your resume — and which critical ones are missing.
-Keyword analysis
-✍️
-Bullet Point Rewrites
-Before and after — stronger verbs, quantified impact, JD-aligned language that gets past ATS filters.
-AI powered
-🕸️
-Radar Profile Chart
-Five-axis interactive chart showing your resume's strength across Keywords, Experience, Skills, Impact, and Format.
-Visual insight
-🔥
-Recruiter Heatmap
-See your resume through a recruiter's eyes — section by section rating in green, amber, and red. Unique to HonestResume.
-Unique feature
-📝
-Cover Letter + Pitch
-Generate a tailored cover letter, 60-second elevator pitch, LinkedIn About, and predicted interview questions — all in one click.
-4 generators
-📄
-Fully Tailored Resume
-Complete rewrite for the specific role with diff view showing exactly what changed. Download as PDF, DOCX, or TXT.
-Full rewrite
-✨
-Enhance Mode
-No JD needed. Strengthen your resume standalone — rewrites bullets and language without needing a job description.
-No JD needed
-⚡
-15-Second Results
-No queues, no email follow-ups. Upload → analyze → full report. Start to finish in under a minute.
-Instant
-HOW IT WORKS
-Three steps. Two minutes.
-No sign-up, no waiting. Upload and go.
-1
+    /* Keywords */
+    .kw-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    @media (max-width: 640px) { .kw-grid { grid-template-columns: 1fr; } }
+    .kw-group-label {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.1em;
+      margin-bottom: 12px;
+    }
+    .kw-tags { display: flex; flex-wrap: wrap; gap: 8px; }
+    .kw-tag {
+      font-size: 12px;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-weight: 400;
+    }
+    .kw-tag.found { background: var(--green-bg); color: var(--green); border: 1px solid rgba(52,211,153,0.15); }
+    .kw-tag.missing { background: var(--red-bg); color: var(--red); border: 1px solid rgba(248,113,113,0.15); }
 
-📄
-Upload your resume
-Drop your resume in PDF, DOCX, or TXT — or paste the text directly. We parse it instantly.
-2
+    /* Strengths / Gaps */
+    .sg-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    @media (max-width: 640px) { .sg-grid { grid-template-columns: 1fr; } }
+    .sg-list { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+    .sg-list li {
+      font-size: 13px;
+      color: var(--muted2);
+      padding-left: 18px;
+      position: relative;
+      line-height: 1.5;
+    }
+    .sg-list.strengths li::before { content: '↑'; position: absolute; left: 0; color: var(--green); font-size: 12px; }
+    .sg-list.gaps li::before { content: '↓'; position: absolute; left: 0; color: var(--red); font-size: 12px; }
 
-💼
-Add the job description
-Upload or paste the JD. More detail means better keyword matching and tailoring.
-3
-🎯
-Get your full report
-ATS score, keyword gaps, rewritten bullets, radar chart, heatmap, and a tailored resume — instantly.
-WHY FREE?
-"The job market is already brutal. Your resume tools shouldn't cost $30/month."
-Most resume tools show you a score, then lock the breakdown behind a subscription. That's predatory. This is open-source so anyone can use it, audit it, and improve it.
-🔒
-No data harvesting
-Your resume is processed and discarded. No profiles, no data sales, no retargeting.
-🔍
-Fully auditable
-Open source — you can read exactly what the AI is asked to do with your resume.
-🤝
-Community driven
-This tool belongs to everyone who needs it. PRs and contributions welcome.
-A
-Amar
-19 years in program management
-"I went through my own job search and got frustrated with resume tools that lock everything behind paywalls. So I built this."
-After nearly two decades managing programs across GCC and India, I found myself back in the job market — and immediately ran into the same wall everyone hits. Tools that show you a score, then hide the actual feedback. Tools that charge $30/month just to see which keywords you're missing. Tools designed to keep you anxious, not help you improve.  HonestResume is what I wish had existed. It's free, it's open source, and it gives you the full picture without asking for anything in return. If it helps you land an interview, that's the whole point.
-THE TOOL
-Analyze your resume
-Upload resume + job description · Full report in ~15 seconds · No account needed
+    /* Bullet rewrites */
+    .rewrite-item { margin-bottom: 20px; }
+    .rewrite-item:last-child { margin-bottom: 0; }
+    .rewrite-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    @media (max-width: 640px) { .rewrite-row { grid-template-columns: 1fr; } }
+    .rewrite-box {
+      padding: 14px 16px;
+      border-radius: 10px;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+    .rewrite-box.before { background: var(--red-bg); border: 1px solid rgba(248,113,113,0.1); }
+    .rewrite-box.after { background: var(--green-bg); border: 1px solid rgba(52,211,153,0.1); }
+    .rewrite-label {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.1em;
+      margin-bottom: 8px;
+    }
+    .rewrite-box.before .rewrite-label { color: var(--red); }
+    .rewrite-box.after .rewrite-label { color: var(--green); }
+    .rewrite-text { color: var(--muted2); }
 
+    /* Summary */
+    .summary-box {
+      background: linear-gradient(135deg, rgba(124,106,255,0.06), rgba(167,139,250,0.04));
+      border: 1px solid rgba(124,106,255,0.15);
+      border-radius: 12px;
+      padding: 20px;
+      font-size: 14px;
+      line-height: 1.7;
+      color: var(--muted2);
+    }
 
+    /* Top rec */
+    .rec-box {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      background: var(--amber-bg);
+      border: 1px solid rgba(251,191,36,0.15);
+      border-radius: 12px;
+      padding: 18px;
+    }
+    .rec-icon { font-size: 20px; flex-shrink: 0; margin-top: 2px; }
+    .rec-label { font-family: var(--mono); font-size: 10px; letter-spacing: 0.1em; color: var(--amber); margin-bottom: 6px; }
+    .rec-text { font-size: 13px; color: var(--muted2); line-height: 1.6; }
 
-honestresume — analyzer
-1
-Upload
-Resume + JD
-2
-Analyzing
-AI processing
-3
-Results
-Full report
-🎯 Analyze vs JD
-✨ Enhance Resume
-Your resume PDF, DOCX, TXT
+    /* Action buttons */
+    .action-row { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; margin-top: 32px; }
+    .action-btn {
+      display: flex; align-items: center; gap: 8px;
+      padding: 12px 24px;
+      border-radius: 10px;
+      font-family: var(--sans);
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+      border: none;
+    }
+    .action-btn.primary {
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      color: white;
+    }
+    .action-btn.primary:hover { opacity: 0.9; transform: translateY(-1px); }
+    .action-btn.secondary {
+      background: var(--surface);
+      border: 1px solid var(--border2);
+      color: var(--muted2);
+    }
+    .action-btn.secondary:hover { border-color: var(--accent); color: var(--text); }
 
-📄
-Click or drag resume here
-Supports PDF, DOCX, TXT
-Job description or paste below
+    /* Toast */
+    .toast {
+      position: fixed; bottom: 24px; right: 24px;
+      background: var(--surface2);
+      border: 1px solid var(--border2);
+      border-radius: 10px;
+      padding: 12px 18px;
+      font-size: 13px;
+      z-index: 999;
+      transform: translateY(80px);
+      opacity: 0;
+      transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
+    }
+    .toast.show { transform: translateY(0); opacity: 1; }
 
-💼
-Click or drag JD here
-Upload or paste below
+    /* Error */
+    .error-box {
+      background: var(--red-bg);
+      border: 1px solid rgba(248,113,113,0.2);
+      border-radius: 12px;
+      padding: 16px 20px;
+      font-size: 13px;
+      color: var(--red);
+      margin-top: 16px;
+      display: none;
+    }
 
-OR PASTE TEXT
+    /* Divider */
+    .divider { height: 1px; background: var(--border); margin: 24px 0; }
 
-Resume text
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
 
-Job description text
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+    }
+  </style>
+</head>
+<body>
 
+<div class="ambient ambient-1"></div>
+<div class="ambient ambient-2"></div>
 
-Run full analysis
-~15 seconds · Free · No sign-up
-Built free, kept free
-HonestResume will always be free and open-source. If it helped you land an interview, a coffee keeps the AI running.
-☕ Buy me a coffee ♥ GitHub Sponsors
-HonestResume
-Free, honest AI resume optimization. No strings attached.
-Features
-How it works
-Try free
-GitHub ⭐
-Instagram
-YouTube
+<!-- NAV -->
+<nav>
+  <div class="nav-inner">
+    <a href="/" class="logo">
+      <div class="logo-mark">⚡</div>
+      HonestResume
+    </a>
+    <span class="badge">FREE · OPEN SOURCE</span>
+  </div>
+</nav>
 
-Done!
-✨ Also generate:
-📝 Cover Letter
-🎤 60-sec Pitch
-❓ Interview Q's
-💼 LinkedIn About
-⭐ STAR Stories
-×
+<!-- MAIN -->
+<div class="wrapper">
+
+  <!-- UPLOAD SCREEN -->
+  <div id="upload-screen">
+    <section class="hero">
+      <div class="hero-eyebrow">Powered by Claude AI</div>
+      <h1>Your resume,<br><em>honestly scored</em></h1>
+      <p>Upload your resume and paste the job description. Get real ATS analysis, gap detection, and rewritten bullets — no paywalls, no fluff.</p>
+    </section>
+
+    <div class="upload-card">
+      <!-- Drop Zone -->
+      <div class="drop-zone" id="drop-zone">
+        <input type="file" id="resume-input" accept=".pdf,.txt,.doc,.docx">
+        <div class="drop-icon">📄</div>
+        <p class="drop-title">Drop your resume here</p>
+        <p class="drop-sub">PDF or TXT · click to browse</p>
+      </div>
+
+      <!-- File slots -->
+      <div class="file-slots">
+        <div class="file-slot" id="resume-slot" onclick="document.getElementById('resume-input').click()">
+          <div class="slot-label">RESUME <span class="slot-icon">📎</span></div>
+          <div class="slot-name" id="resume-name">Click to upload</div>
+        </div>
+        <div class="file-slot" id="jd-slot">
+          <div class="slot-label">JOB DESCRIPTION</div>
+          <div class="slot-name" style="color: var(--muted); font-size:12px;">Paste below ↓</div>
+        </div>
+      </div>
+
+      <!-- JD textarea -->
+      <textarea class="jd-textarea" id="jd-text" placeholder="Paste the full job description here...&#10;&#10;Include responsibilities, requirements, and preferred qualifications for best results."></textarea>
+
+      <div class="error-box" id="error-box"></div>
+
+      <button class="analyze-btn" onclick="startAnalysis()">
+        Analyze Resume → 
+      </button>
+    </div>
+  </div>
+
+  <!-- LOADING SCREEN -->
+  <div id="loading-screen" style="padding: 140px 0 80px;">
+    <div class="loader-ring"></div>
+    <p style="color: var(--muted2); font-size: 14px; margin-bottom: 4px;">Analyzing your resume…</p>
+    <p style="color: var(--muted); font-size: 12px; font-family: var(--mono);">This takes about 10–15 seconds</p>
+    <ul class="loading-steps" id="loading-steps">
+      <li id="step-1">Parsing resume content</li>
+      <li id="step-2">Extracting job requirements</li>
+      <li id="step-3">Running keyword analysis</li>
+      <li id="step-4">Scoring ATS compatibility</li>
+      <li id="step-5">Writing bullet improvements</li>
+    </ul>
+  </div>
+
+  <!-- RESULTS SCREEN -->
+  <div id="results-screen">
+    <div class="results-header">
+      <div>
+        <p style="font-size:12px; color:var(--muted); font-family:var(--mono); margin-bottom:4px;">ANALYSIS COMPLETE</p>
+        <h2 style="font-size:22px; font-weight:600; letter-spacing:-0.03em;">Your Resume Report</h2>
+      </div>
+      <button class="back-btn" onclick="resetToUpload()">← Analyze another</button>
+    </div>
+
+    <!-- Score Row -->
+    <div class="score-row">
+      <div class="score-card">
+        <div class="score-ring-wrap">
+          <svg width="120" height="120" viewBox="0 0 120 120">
+            <circle cx="60" cy="60" r="52" fill="none" stroke="var(--border2)" stroke-width="8"/>
+            <circle id="score-circle" cx="60" cy="60" r="52" fill="none" stroke="var(--accent)" stroke-width="8"
+                    stroke-dasharray="326.7" stroke-dashoffset="326.7" stroke-linecap="round"
+                    style="transition: stroke-dashoffset 1.2s cubic-bezier(0.4,0,0.2,1)"/>
+          </svg>
+          <div class="score-number">
+            <div class="score-big" id="ats-display">–</div>
+          </div>
+        </div>
+        <div style="font-size:12px; color:var(--muted); margin-bottom:6px;">ATS Score</div>
+        <div class="verdict-label" id="verdict-label">–</div>
+        <p class="verdict-reason" id="verdict-reason"></p>
+      </div>
+
+      <div class="cats-card">
+        <div id="cat-rows"></div>
+      </div>
+    </div>
+
+    <!-- Keywords -->
+    <div class="panel">
+      <div class="panel-title">
+        <div class="panel-title-icon" style="background:rgba(52,211,153,0.1);">🔑</div>
+        Keyword Analysis
+      </div>
+      <div class="kw-grid">
+        <div>
+          <div class="kw-group-label" style="color:var(--green);">FOUND IN YOUR RESUME</div>
+          <div class="kw-tags" id="found-tags"></div>
+        </div>
+        <div>
+          <div class="kw-group-label" style="color:var(--red);">MISSING — ADD THESE</div>
+          <div class="kw-tags" id="missing-tags"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Strengths & Gaps -->
+    <div class="panel">
+      <div class="panel-title">
+        <div class="panel-title-icon" style="background:rgba(124,106,255,0.1);">⚡</div>
+        Strengths & Gaps
+      </div>
+      <div class="sg-grid">
+        <div>
+          <div class="kw-group-label" style="color:var(--green); margin-bottom:12px;">WHAT'S WORKING</div>
+          <ul class="sg-list strengths" id="strengths-list"></ul>
+        </div>
+        <div>
+          <div class="kw-group-label" style="color:var(--red); margin-bottom:12px;">WHERE YOU'RE FALLING SHORT</div>
+          <ul class="sg-list gaps" id="gaps-list"></ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bullet Rewrites -->
+    <div class="panel">
+      <div class="panel-title">
+        <div class="panel-title-icon" style="background:rgba(251,191,36,0.1);">✏️</div>
+        Bullet Point Rewrites
+      </div>
+      <div id="bullet-rewrites"></div>
+    </div>
+
+    <!-- Tailored Summary -->
+    <div class="panel">
+      <div class="panel-title">
+        <div class="panel-title-icon" style="background:rgba(96,165,250,0.1);">📝</div>
+        Tailored Professional Summary
+      </div>
+      <div class="summary-box" id="tailored-summary"></div>
+    </div>
+
+    <!-- Top Recommendation -->
+    <div class="panel">
+      <div class="panel-title">
+        <div class="panel-title-icon" style="background:var(--amber-bg);">🎯</div>
+        #1 Thing to Fix Right Now
+      </div>
+      <div class="rec-box">
+        <div class="rec-icon">⚠️</div>
+        <div>
+          <div class="rec-label">TOP PRIORITY</div>
+          <div class="rec-text" id="top-rec"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="action-row">
+      <button class="action-btn primary" onclick="downloadReport()">↓ Download Full Report</button>
+      <button class="action-btn secondary" onclick="copyReport()">⎘ Copy to Clipboard</button>
+    </div>
+
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<!-- PDF.js worker -->
+<script>
+  if (typeof pdfjsLib !== 'undefined') {
+    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+  }
+</script>
+
+<script>
+  let resumeText = '';
+  let jdText = '';
+  let analysisResult = null;
+
+  // ── FILE HANDLING ──
+  const dropZone = document.getElementById('drop-zone');
+  const resumeInput = document.getElementById('resume-input');
+
+  dropZone.addEventListener('click', () => resumeInput.click());
+  dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('drag-over'); });
+  dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
+  dropZone.addEventListener('drop', e => {
+    e.preventDefault();
+    dropZone.classList.remove('drag-over');
+    const file = e.dataTransfer.files[0];
+    if (file) handleResumeFile(file);
+  });
+
+  resumeInput.addEventListener('change', e => {
+    if (e.target.files[0]) handleResumeFile(e.target.files[0]);
+  });
+
+  async function handleResumeFile(file) {
+    const slot = document.getElementById('resume-slot');
+    const name = document.getElementById('resume-name');
+    name.textContent = file.name;
+    slot.classList.add('has-file');
+
+    if (file.type === 'application/pdf') {
+      try {
+        const arrayBuffer = await file.arrayBuffer();
+        const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+        let text = '';
+        for (let i = 1; i <= pdf.numPages; i++) {
+          const page = await pdf.getPage(i);
+          const content = await page.getTextContent();
+          text += content.items.map(s => s.str).join(' ') + '\n';
+        }
+        resumeText = text;
+      } catch (err) {
+        showError('Could not parse PDF. Try uploading a TXT version of your resume.');
+        resumeText = '';
+      }
+    } else {
+      resumeText = await file.text();
+    }
+  }
+
+  // ── ANALYSIS ──
+  async function startAnalysis() {
+    const jd = document.getElementById('jd-text').value.trim();
+    hideError();
+
+    if (!resumeText) { showError('Please upload your resume first.'); return; }
+    if (!jd) { showError('Please paste a job description.'); return; }
+    jdText = jd;
+
+    document.getElementById('upload-screen').style.display = 'none';
+    document.getElementById('loading-screen').style.display = 'block';
+
+    // Animate loading steps
+    const steps = ['step-1','step-2','step-3','step-4','step-5'];
+    let i = 0;
+    const stepInterval = setInterval(() => {
+      if (i > 0) document.getElementById(steps[i-1]).classList.replace('active','done');
+      if (i < steps.length) { document.getElementById(steps[i]).classList.add('active'); i++; }
+      else clearInterval(stepInterval);
+    }, 2200);
+
+    try {
+      const res = await fetch('/.netlify/functions/analyze', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ resumeText, jdText })
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Analysis failed');
+
+      clearInterval(stepInterval);
+      steps.forEach(s => document.getElementById(s).classList.add('done'));
+
+      await sleep(600);
+      document.getElementById('loading-screen').style.display = 'none';
+      analysisResult = data;
+      renderResults(data);
+      document.getElementById('results-screen').style.display = 'block';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    } catch (err) {
+      clearInterval(stepInterval);
+      document.getElementById('loading-screen').style.display = 'none';
+      document.getElementById('upload-screen').style.display = 'block';
+      showError('Analysis failed: ' + err.message + '. Check your Netlify function and API key.');
+    }
+  }
+
+  function renderResults(d) {
+    // Score ring
+    const score = d.ats_score || 0;
+    const circumference = 326.7;
+    const offset = circumference * (1 - score / 100);
+    setTimeout(() => {
+      document.getElementById('score-circle').style.strokeDashoffset = offset;
+      // Color by score
+      const color = score >= 80 ? 'var(--green)' : score >= 60 ? 'var(--accent)' : score >= 40 ? 'var(--amber)' : 'var(--red)';
+      document.getElementById('score-circle').style.stroke = color;
+    }, 100);
+    document.getElementById('ats-display').textContent = score;
+
+    // Verdict
+    const vLabel = document.getElementById('verdict-label');
+    const verdict = d.verdict || '';
+    vLabel.textContent = verdict;
+    if (verdict.includes('STRONG')) vLabel.className = 'verdict-label strong';
+    else if (verdict.includes('GOOD')) vLabel.className = 'verdict-label good';
+    else if (verdict.includes('NEEDS')) vLabel.className = 'verdict-label needs';
+    else vLabel.className = 'verdict-label poor';
+    document.getElementById('verdict-reason').textContent = d.verdict_reason || '';
+
+    // Category bars
+    const cats = [
+      { label: 'Keyword Match', key: 'keyword_match', color: 'var(--accent)' },
+      { label: 'Experience Fit', key: 'experience_fit', color: '#60a5fa' },
+      { label: 'Skills Match', key: 'skills_match', color: 'var(--amber)' },
+      { label: 'Formatting', key: 'formatting', color: 'var(--green)' },
+    ];
+    const catHtml = cats.map(c => {
+      const val = (d.scores || {})[c.key] || 0;
+      return `<div class="cat-row">
+        <div class="cat-name">${c.label}</div>
+        <div class="cat-bar-wrap"><div class="cat-bar" data-width="${val}" style="background:${c.color};"></div></div>
+        <div class="cat-val" style="color:${c.color}">${val}</div>
+      </div>`;
+    }).join('');
+    document.getElementById('cat-rows').innerHTML = catHtml;
+    setTimeout(() => {
+      document.querySelectorAll('.cat-bar').forEach(b => { b.style.width = b.dataset.width + '%'; });
+    }, 200);
+
+    // Keywords
+    const foundTags = (d.found_keywords || []).map(k =>
+      `<span class="kw-tag found">${k}</span>`).join('');
+    const missingTags = (d.missing_keywords || []).map(k =>
+      `<span class="kw-tag missing">${k}</span>`).join('');
+    document.getElementById('found-tags').innerHTML = foundTags || '<span style="color:var(--muted);font-size:12px;">None detected</span>';
+    document.getElementById('missing-tags').innerHTML = missingTags || '<span style="color:var(--muted);font-size:12px;">None detected</span>';
+
+    // Strengths & Gaps
+    document.getElementById('strengths-list').innerHTML =
+      (d.strengths || []).map(s => `<li>${s}</li>`).join('');
+    document.getElementById('gaps-list').innerHTML =
+      (d.gaps || []).map(g => `<li>${g}</li>`).join('');
+
+    // Bullet rewrites
+    const rewrites = (d.bullet_rewrites || []).map(r => `
+      <div class="rewrite-item">
+        <div class="rewrite-row">
+          <div class="rewrite-box before">
+            <div class="rewrite-label">ORIGINAL</div>
+            <div class="rewrite-text">${r.original}</div>
+          </div>
+          <div class="rewrite-box after">
+            <div class="rewrite-label">IMPROVED</div>
+            <div class="rewrite-text">${r.improved}</div>
+          </div>
+        </div>
+      </div>`).join('');
+    document.getElementById('bullet-rewrites').innerHTML = rewrites || '<p style="color:var(--muted);font-size:13px;">No rewrites generated.</p>';
+
+    // Summary & Rec
+    document.getElementById('tailored-summary').textContent = d.tailored_summary || '';
+    document.getElementById('top-rec').textContent = d.top_recommendation || '';
+  }
+
+  // ── UTILS ──
+  function resetToUpload() {
+    document.getElementById('results-screen').style.display = 'none';
+    document.getElementById('upload-screen').style.display = 'block';
+    // Reset loading steps
+    ['step-1','step-2','step-3','step-4','step-5'].forEach(s => {
+      const el = document.getElementById(s);
+      el.classList.remove('active','done');
+    });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function showError(msg) {
+    const box = document.getElementById('error-box');
+    box.textContent = msg;
+    box.style.display = 'block';
+  }
+  function hideError() { document.getElementById('error-box').style.display = 'none'; }
+
+  function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 3000);
+  }
+
+  function buildReportText() {
+    if (!analysisResult) return '';
+    const d = analysisResult;
+    return [
+      'HONESTRESUME ANALYSIS REPORT',
+      '='.repeat(40),
+      `ATS Score: ${d.ats_score}/100 — ${d.verdict}`,
+      `Summary: ${d.verdict_reason}`,
+      '',
+      'CATEGORY SCORES',
+      '-'.repeat(30),
+      `Keyword Match: ${(d.scores||{}).keyword_match}`,
+      `Experience Fit: ${(d.scores||{}).experience_fit}`,
+      `Skills Match: ${(d.scores||{}).skills_match}`,
+      `Formatting: ${(d.scores||{}).formatting}`,
+      '',
+      'FOUND KEYWORDS',
+      (d.found_keywords||[]).join(', '),
+      '',
+      'MISSING KEYWORDS',
+      (d.missing_keywords||[]).join(', '),
+      '',
+      'STRENGTHS',
+      (d.strengths||[]).map(s => '• ' + s).join('\n'),
+      '',
+      'GAPS',
+      (d.gaps||[]).map(g => '• ' + g).join('\n'),
+      '',
+      'BULLET REWRITES',
+      (d.bullet_rewrites||[]).map(r => `Before: ${r.original}\nAfter:  ${r.improved}`).join('\n\n'),
+      '',
+      'TAILORED PROFESSIONAL SUMMARY',
+      d.tailored_summary,
+      '',
+      'TOP PRIORITY ACTION',
+      d.top_recommendation,
+      '',
+      'Generated by HonestResume — honestresumes.in'
+    ].join('\n');
+  }
+
+  function downloadReport() {
+    const text = buildReportText();
+    const blob = new Blob([text], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = 'HonestResume_Report.txt'; a.click();
+    URL.revokeObjectURL(url);
+    showToast('✓ Report downloaded');
+  }
+
+  function copyReport() {
+    navigator.clipboard.writeText(buildReportText())
+      .then(() => showToast('✓ Copied to clipboard'))
+      .catch(() => showToast('Could not copy — try downloading instead'));
+  }
+</script>
+</body>
+</html>
