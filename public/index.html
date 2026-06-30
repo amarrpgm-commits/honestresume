@@ -1721,8 +1721,7 @@ ${jdSlice}`;
     if(data.error)throw new Error(data.error);
     const txt=data.content.map(c=>c.text||'').join('');
     let parsed;
-    txt.replace(/```json\n?/g,'').replace(/```/g,'').trim()
-    catch(e){throw new Error('AI returned unexpected format. Please try again.');}
+    try{parsed=JSON.parse(txt.replace(/```json\n?/g,'').replace(/```/g,'').trim());}catch(e){throw new Error('AI returned unexpected format. Please try again.');}
     stopLoader();lastResult=parsed;renderResults(parsed);setStep(3);
     saveToHistory(parsed);showGenSection();
   }catch(e){
