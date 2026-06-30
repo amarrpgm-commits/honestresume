@@ -15,7 +15,6 @@ export async function onRequestPost(context) {
     }
 
     const body = await context.request.json();
-    const prompt = body.messages?.[0]?.content || '';
 
     const response = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
@@ -25,24 +24,23 @@ export async function onRequestPost(context) {
         'anthropic-version': '2023-06-01',
       },
       body: JSON.stringify({
-        model: 'claude-haiku-4-5-20251001',
-        max_tokens: 4000,
-        messages: [{ role: 'user', content: prompt }],
+        model: body.model || 'claude-haiku-4-5-20251001',
+        max_tokens: body.max_tokens || 4000,
+        messages: body.messages,
       }),
     });
 
     const data = await response.json();
-    const text = data?.content?.[0]?.text || '';
 
-    if (!text) {
+    if (data.error) {
       return new Response(
-        JSON.stringify({ error: 'Empty response from AI.' }),
+        JSON.stringify({ error: data.error.message || 'Anthropic API error' }),
         { status: 500, headers: corsHeaders }
       );
     }
 
     return new Response(
-      JSON.stringify({ content: [{ type: 'text', text }] }),
+      JSON.stringify(data),
       { status: 200, headers: corsHeaders }
     );
 
