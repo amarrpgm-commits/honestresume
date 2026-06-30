@@ -1721,7 +1721,7 @@ ${jdSlice}`;
     if(data.error)throw new Error(data.error);
     const txt=data.content.map(c=>c.text||'').join('');
     let parsed;
-    try{parsed=JSON.parse(txt.replace(/```json|```/g,'').trim());}
+    txt.replace(/```json\n?/g,'').replace(/```/g,'').trim()
     catch(e){throw new Error('AI returned unexpected format. Please try again.');}
     stopLoader();lastResult=parsed;renderResults(parsed);setStep(3);
     saveToHistory(parsed);showGenSection();
@@ -2250,7 +2250,7 @@ function renderGenOutput(type,txt){
   if(type==='questions'){
     const out=document.getElementById('out-questions');
     try{
-      const qs=JSON.parse(txt.replace(/```json|```/g,'').trim());
+     txt.replace(/```json\n?/g,'').replace(/```/g,'').trim()
       out.innerHTML=qs.map(q=>`<div class="iq-item"><div class="iq-cat">${q.category||'Question'}</div><div class="iq-q">${q.question}</div><div class="iq-tip">💡 ${q.tip||''}</div></div>`).join('');
     }catch(e){out.innerHTML=`<div style="white-space:pre-wrap;font-size:13px;color:var(--ink)">${txt}</div>`;}
     out.style.display='flex';out.style.flexDirection='column';
