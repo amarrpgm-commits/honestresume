@@ -1702,7 +1702,7 @@ ${jdSlice}`;
       const lmsg=document.getElementById('lmsg');
       if(lmsg)lmsg.textContent='Retrying with shorter content...';
     }
-    const resp=await fetch('/.netlify/functions/analyze',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-haiku-4-5-20251001',max_tokens:4000,messages:[{role:'user',content:prompt}]})});
+    const resp=await fetch('/functions/analyze',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-haiku-4-5-20251001',max_tokens:4000,messages:[{role:'user',content:prompt}]})});
     const raw=await resp.text();
     if(!resp.ok){
       // Auto-retry on timeout
@@ -2235,7 +2235,7 @@ async function generateContent(type){
   btn.disabled=true;loader.classList.add('show');
   const prompt=(currentMode==='enhance'||!j)?genPromptEnhance[type](r,null,focus):genPrompts[type](r,j,focus);
   try{
-    const resp=await fetch('/.netlify/functions/analyze',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-haiku-4-5-20251001',max_tokens:2000,messages:[{role:'user',content:prompt}]})});
+    const resp=await fetch('/functions/analyze',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-haiku-4-5-20251001',max_tokens:2000,messages:[{role:'user',content:prompt}]})});
     const raw=await resp.text();
     const data=JSON.parse(raw);
     if(data.error)throw new Error(data.error);
